@@ -20,7 +20,7 @@ Nodemon is handy for reloading the server when anything changes.
        "value":1.2,
        "time":1348961737
     }
-```    
+```
  * Write some code to interpret and take action that data (examples coming)
 
 ```coffeescript
