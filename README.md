@@ -28,7 +28,7 @@ class LineChart
   accepts: ["timeseries"]
   initialize: () ->
     console.log "tbd"
-  data: (d) ->
-    console.log "I got a data!"
+  data: (d, e) ->
+    e.append data.whatever
 ```
  * Push your code to your repo, and everyone using it will see its effects immediately.

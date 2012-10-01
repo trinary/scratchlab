@@ -27,8 +27,10 @@ app.configure 'production', ->
 # Routes
 
 app.get '/', routes.index 
+
 app.get '/types', (req, res) ->
   res.status(200).json types
+
 app.post '/data', (req,res) ->
   unless types[req.body.type]
     types[req.body.type] = req.body
