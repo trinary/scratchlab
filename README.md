@@ -21,7 +21,21 @@ Nodemon is handy for reloading the server when anything changes.
        "time":1348961737
     }
 ```
- * Write some code to interpret and take action that data (examples coming)
+
+ * See what data types the system knows about and an example doc for each
+
+```
+   GET /types
+   {
+        "type":"text"
+        "example": {
+            "type":"text",
+            "name":"example",
+            "content":"This is an example of a datatype example."
+        }
+    }
+```
+ * Write some code to interpret and take action that data (real examples coming - TODO)
 
 ```coffeescript
 class LineChart
@@ -31,4 +45,4 @@ class LineChart
   data: (d, e) ->
     e.append data.whatever
 ```
- * Push your code to your repo, and everyone using it will see its effects immediately.
+ * Push your code to your repo, and everyone using it will see its effects immediately. (TODO)
