@@ -25,6 +25,10 @@ app.configure 'production', ->
 # Routes
 
 app.get '/', routes.index 
+app.post '/data', (req,res) ->
+  io.sockets.emit 'data', req.body
+  res.status(201).json({status: "created"})
+
 
 io.sockets.on 'connection', (socket) ->
   socket.emit 'news', { hello: 'world' }
