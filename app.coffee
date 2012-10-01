@@ -5,6 +5,8 @@ socket = require('socket.io')
 app = module.exports = express.createServer()
 io = socket.listen(app)
 
+types = {}
+
 # Configuration
 
 app.configure ->
@@ -25,7 +27,11 @@ app.configure 'production', ->
 # Routes
 
 app.get '/', routes.index 
+app.get '/types', (req, res) ->
+  res.status(200).json types
 app.post '/data', (req,res) ->
+  unless types[req.body.type]
+    types[req.body.type] = req.body
   io.sockets.emit 'data', req.body
   res.status(201).json({status: "created"})
 
