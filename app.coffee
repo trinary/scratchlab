@@ -5,6 +5,9 @@ socket = require('socket.io')
 app = module.exports = express.createServer()
 io = socket.listen(app)
 
+port = process.env.PORT || 3000
+console.log port
+
 types = {}
 
 # Configuration
@@ -44,6 +47,6 @@ io.sockets.on 'connection', (socket) ->
   socket.on 'new code', (data) ->
     socket.emit 'reload', {target: "all"}
 
-app.listen 3000,->
+app.listen port,->
   console.log "Express server listening on port %d in %s mode", app.address().port, app.settings.env
 
