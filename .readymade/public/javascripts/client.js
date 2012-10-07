@@ -2,7 +2,7 @@
 
   $(function() {
     var socket, t, _i, _len, _ref;
-    socket = io.connect('http://localhost');
+    socket = io.connect(window.location);
     _ref = window.handlerTypes;
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       t = _ref[_i];

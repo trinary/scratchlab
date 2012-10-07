@@ -1,5 +1,5 @@
 $ ->
-  socket = io.connect 'http://localhost'
+  socket = io.connect window.location
 
   for t in window.handlerTypes
     window.handlers = []
