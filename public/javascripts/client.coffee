@@ -11,10 +11,16 @@ $ ->
     setTimeout ->
       window.location.reload()
     , 5000
+
   socket.on 'data', (data) ->
     console.log "Got new data", data
     type = data.type
+    console.log window.handlers
     for h in window.handlers
-      # TODO: make this conditional on the contents of h.handles
-      h.data(data, $('.view'))
+      console.log h.handles, data.type
+      if _.contains h.handles, data.type
+        console.log "it does!"
+        h.data(data, $('.view')) 
+      else
+        console.log "it doesn't!"
 
