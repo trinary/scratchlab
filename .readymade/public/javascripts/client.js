@@ -4,10 +4,10 @@
     var socket, t, _i, _len, _ref;
     console.log("jq ready firing in client.coffee");
     socket = io.connect(window.location);
+    window.handlers = [];
     _ref = window.handlerTypes;
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       t = _ref[_i];
-      window.handlers = [];
       window.handlers.push(new t);
     }
     socket.on('reload', function(what) {

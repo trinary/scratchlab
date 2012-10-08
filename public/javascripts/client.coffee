@@ -2,8 +2,8 @@ $ ->
   console.log "jq ready firing in client.coffee"
   socket = io.connect window.location
 
+  window.handlers = []
   for t in window.handlerTypes
-    window.handlers = []
     window.handlers.push new t
 
   socket.on 'reload', (what) -> 
