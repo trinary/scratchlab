@@ -20,11 +20,18 @@
       var h, type, _j, _len2, _ref2, _results;
       console.log("Got new data", data);
       type = data.type;
+      console.log(window.handlers);
       _ref2 = window.handlers;
       _results = [];
       for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
         h = _ref2[_j];
-        _results.push(h.data(data, $('.view')));
+        console.log(h.handles, data.type);
+        if (_.contains(h.handles, data.type)) {
+          console.log("it does!");
+          _results.push(h.data(data, $('.view')));
+        } else {
+          _results.push(console.log("it doesn't!"));
+        }
       }
       return _results;
     });
