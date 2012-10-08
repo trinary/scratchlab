@@ -15,7 +15,7 @@
 
   })();
 
-  if (window.handlerTypes) {
+  if ((window.handlerTypes != null) > 0) {
     window.handlerTypes.push(LoadAverage);
   } else {
     window.handlerTypes = [LoadAverage];

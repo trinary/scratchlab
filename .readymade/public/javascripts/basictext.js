@@ -15,7 +15,7 @@
 
   })();
 
-  if (window.handlerTypes) {
+  if ((window.handlerTypes != null) > 0) {
     window.handlerTypes.push(BasicText);
   } else {
     window.handlerTypes = [BasicText];

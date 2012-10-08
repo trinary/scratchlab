@@ -3,7 +3,7 @@ class LoadAverage
     elem.append $("<p>#{data.value}</p>")
   handles: ["loadavg"]
 
-if window.handlerTypes
+if window.handlerTypes? > 0
   window.handlerTypes.push LoadAverage
 else
   window.handlerTypes = [LoadAverage]
