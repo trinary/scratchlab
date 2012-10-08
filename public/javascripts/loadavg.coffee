@@ -1,6 +1,6 @@
 class LoadAverage
   data: (data, elem) ->
-    elem.append(data.value)
+    elem.append $("<p>#{data.value}</p>")
   handles: ["loadavg"]
 
 if window.handlerTypes

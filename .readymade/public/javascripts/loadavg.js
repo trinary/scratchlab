@@ -6,7 +6,7 @@
     function LoadAverage() {}
 
     LoadAverage.prototype.data = function(data, elem) {
-      return elem.append(data.value);
+      return elem.append($("<p>" + data.value + "</p>"));
     };
 
     LoadAverage.prototype.handles = ["loadavg"];

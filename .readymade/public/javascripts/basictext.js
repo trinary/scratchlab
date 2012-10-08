@@ -6,7 +6,7 @@
     function BasicText() {}
 
     BasicText.prototype.data = function(data, elem) {
-      return elem.append(data.content);
+      return elem.append($("<p>" + data.content + "</p>"));
     };
 
     BasicText.prototype.handles = ["text"];
