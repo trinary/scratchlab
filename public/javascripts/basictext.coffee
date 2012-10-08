@@ -1,10 +1,10 @@
 
 class BasicText
   data: (data, elem) ->
-    elem.append(data.content)
+    elem.append $("<p>#{data.content}</p>")
   handles: ["text"]
 
-if window.handlers
+if window.handlerTypes
   window.handlerTypes.push BasicText
 else
   window.handlerTypes = [BasicText]
