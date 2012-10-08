@@ -17,4 +17,6 @@
 
   console.log("adding loadavg");
 
+  window.handlerTypes.push(LoadAverage);
+
 }).call(this);

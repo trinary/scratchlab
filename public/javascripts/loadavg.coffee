@@ -4,4 +4,4 @@ class LoadAverage
   handles: ["loadavg"]
 
 console.log "adding loadavg"
-#window.handlerTypes.push LoadAverage
+window.handlerTypes.push LoadAverage
