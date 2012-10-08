@@ -15,10 +15,6 @@
 
   })();
 
-  if ((window.handlerTypes != null) > 0) {
-    window.handlerTypes.push(LoadAverage);
-  } else {
-    window.handlerTypes = [LoadAverage];
-  }
+  console.log("adding loadavg");
 
 }).call(this);

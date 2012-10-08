@@ -15,10 +15,8 @@
 
   })();
 
-  if ((window.handlerTypes != null) > 0) {
-    window.handlerTypes.push(BasicText);
-  } else {
-    window.handlerTypes = [BasicText];
-  }
+  console.log("adding text");
+
+  window.handlerTypes.push(BasicText);
 
 }).call(this);

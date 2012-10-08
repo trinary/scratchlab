@@ -1,4 +1,5 @@
 $ ->
+  console.log "jq ready firing in client.coffee"
   socket = io.connect window.location
 
   for t in window.handlerTypes

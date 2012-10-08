@@ -2,6 +2,7 @@
 
   $(function() {
     var socket, t, _i, _len, _ref;
+    console.log("jq ready firing in client.coffee");
     socket = io.connect(window.location);
     _ref = window.handlerTypes;
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
