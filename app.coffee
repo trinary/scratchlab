@@ -31,6 +31,8 @@ app.configure 'production', ->
 
 app.get '/', routes.index 
 
+app.get '/what', routes.what
+
 app.get '/types', (req, res) ->
   res.status(200).json types
 

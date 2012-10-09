@@ -6,7 +6,7 @@
     function BasicText() {}
 
     BasicText.prototype.data = function(data, elem) {
-      return elem.append($("<p>" + data.content + "</p>"));
+      return elem.append($("<p class='text'>" + data.content + "</p>"));
     };
 
     BasicText.prototype.handles = ["text"];
@@ -15,12 +15,6 @@
 
   })();
 
-  console.log("adding text");
-
-  console.log("types are: ", window.handlerTypes);
-
   window.handlerTypes.push(BasicText);
-
-  console.log("types are now: ", window.handlerTypes);
 
 }).call(this);

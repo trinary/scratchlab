@@ -9,3 +9,6 @@ a {
   border: 1px solid #666666;
   width: 960px;
   height: 960px; }
+
+.text {
+  color: blue; }
