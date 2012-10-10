@@ -43,7 +43,6 @@ app.post '/data', (req,res) ->
   res.status(201).json({status: "created"})
 
 io.sockets.on 'connection', (socket) ->
-  socket.emit 'news', { hello: 'world' }
   socket.on 'my other event', (data) ->
     console.log(data)
   socket.on 'new code', (data) ->
