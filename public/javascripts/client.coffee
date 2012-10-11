@@ -17,6 +17,7 @@ $ ->
       name = h.name
       view = $('.view')
       target = view.find("##{name}") 
-      target = view.append("<div class=\"handler\" id=\"#{name}\"></div>") unless target.length > 0
+      target = $("<div class=\"handler\" id=\"#{name}\"></div>").appendTo view unless target.length > 0
+      console.log target
       h.data(data, target) if _.contains h.handles, data.type
 
