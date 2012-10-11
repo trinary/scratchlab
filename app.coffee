@@ -42,6 +42,10 @@ app.post '/data', (req,res) ->
   io.sockets.emit 'data', req.body
   res.status(201).json({status: "created"})
 
+app.post '/update', (req, res) ->
+  io.sockets.emit 'reload', {target: "all"}
+  res.status(200).json({status: "reloaded"})
+
 io.sockets.on 'connection', (socket) ->
   socket.on 'my other event', (data) ->
     console.log(data)
