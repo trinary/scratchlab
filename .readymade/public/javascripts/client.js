@@ -28,7 +28,6 @@
         if (!(target.length > 0)) {
           target = $("<div class=\"handler\" id=\"" + name + "\"></div>").appendTo(view);
         }
-        console.log(target);
         if (_.contains(h.handles, data.type)) {
           _results.push(h.data(data, target));
         } else {
