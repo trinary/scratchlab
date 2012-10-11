@@ -16,7 +16,7 @@ $ ->
     for h in window.handlers
       name = h.name
       view = $('.view')
-      target = view.find(".#{name}") 
-      target = view.append("<div class=\"#{name}\"></div>") unless target.length > 0
+      target = view.find("##{name}") 
+      target = view.append("<div class=\"handler\" id=\"#{name}\"></div>") unless target.length > 0
       h.data(data, target) if _.contains h.handles, data.type
 

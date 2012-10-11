@@ -24,9 +24,9 @@
         h = _ref2[_j];
         name = h.name;
         view = $('.view');
-        target = view.find("." + name);
+        target = view.find("#" + name);
         if (!(target.length > 0)) {
-          target = view.append("<div class=\"" + name + "\"></div>");
+          target = view.append("<div class=\"handler\" id=\"" + name + "\"></div>");
         }
         if (_.contains(h.handles, data.type)) {
           _results.push(h.data(data, target));
