@@ -14,5 +14,10 @@ $ ->
   socket.on 'data', (data) ->
     type = data.type
     for h in window.handlers
-      h.data(data, $('.view')) if _.contains h.handles, data.type
+      name = h.name
+      view = $('.view')
+      target = view.find(".#{name}") 
+      target = view.append("<div class=\"#{name}\"></div>") unless target.length > 0
+      console.log target
+      h.data(data, target) if _.contains h.handles, data.type
 

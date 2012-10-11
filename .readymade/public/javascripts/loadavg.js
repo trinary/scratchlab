@@ -11,11 +11,11 @@
 
     LoadAverage.prototype.handles = ["loadavg"];
 
+    LoadAverage.prototype.name = "loadavg";
+
     return LoadAverage;
 
   })();
-
-  console.log("adding loadavg");
 
   window.handlerTypes.push(LoadAverage);
 

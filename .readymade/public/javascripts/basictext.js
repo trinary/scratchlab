@@ -11,6 +11,8 @@
 
     BasicText.prototype.handles = ["text"];
 
+    BasicText.prototype.name = "basictext";
+
     return BasicText;
 
   })();

@@ -16,14 +16,21 @@
       }, 5000);
     });
     return socket.on('data', function(data) {
-      var h, type, _j, _len2, _ref2, _results;
+      var h, name, target, type, view, _j, _len2, _ref2, _results;
       type = data.type;
       _ref2 = window.handlers;
       _results = [];
       for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
         h = _ref2[_j];
+        name = h.name;
+        view = $('.view');
+        target = view.find("." + name);
+        if (!(target.length > 0)) {
+          target = view.append("<div class=\"" + name + "\"></div>");
+        }
+        console.log(target);
         if (_.contains(h.handles, data.type)) {
-          _results.push(h.data(data, $('.view')));
+          _results.push(h.data(data, target));
         } else {
           _results.push(void 0);
         }
