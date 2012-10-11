@@ -28,7 +28,6 @@
         if (!(target.length > 0)) {
           target = view.append("<div class=\"" + name + "\"></div>");
         }
-        console.log(target);
         if (_.contains(h.handles, data.type)) {
           _results.push(h.data(data, target));
         } else {

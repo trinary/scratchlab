@@ -6,6 +6,8 @@ a {
   color: #00b7ff; }
 
 .view {
+  display: -webkit-flex;
+  display: flex;
   border: 1px solid #666666;
   width: 960px;
   height: 960px; }
