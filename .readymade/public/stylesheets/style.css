@@ -8,12 +8,16 @@ a {
 .view {
   display: -webkit-flex;
   display: flex;
+  webkit-flex: auto;
+  flex-flow: column wrap-reverse;
+  -webkit-flex-flow: column wrap-reverse;
   border: 1px solid #666666;
   width: 960px;
   height: 960px; }
 
 .handler {
-  border: 1px solid #333333; }
+  border: 1px solid #333333;
+  overflow: auto; }
 
 .text {
   color: blue; }
