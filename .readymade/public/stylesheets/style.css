@@ -5,6 +5,9 @@ body {
 a {
   color: #00b7ff; }
 
+section {
+  width: 400px; }
+
 .view {
   display: -webkit-flex;
   display: flex;
