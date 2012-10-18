@@ -7,7 +7,7 @@ class LoadAverage
 
   data: (data, elem) =>
     @points.push data
-    @points.slice(@points.length - 200)
+    @points = @points.slice(@points.length - 200) if @points.length > 200
     if @svg == null
       @svg = d3.select("##{@name}")
         .append "svg"

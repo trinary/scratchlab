@@ -23,7 +23,10 @@
     LoadAverage.prototype.data = function(data, elem) {
       var line, x, y;
       this.points.push(data);
-      this.points.slice(this.points.length - 200);
+      console.log(this.points.length);
+      if (this.points.length > 200) {
+        this.points = this.points.slice(this.points.length - 200);
+      }
       if (this.svg === null) {
         this.svg = d3.select("#" + this.name).append("svg");
         this.svg.attr({
