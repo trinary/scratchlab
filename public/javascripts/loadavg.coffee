@@ -4,6 +4,11 @@ class LoadAverage
   points: []
   handles: ["loadavg"]
   name: "loadavg"
+  margin:
+    left: 40
+    right: 40
+    top: 40
+    bottom:40
 
   data: (data, elem) =>
     @points.push data
@@ -12,17 +17,18 @@ class LoadAverage
       @svg = d3.select("##{@name}")
         .append "svg"
       @svg.attr
-        width: elem.width()
-        height: elem.height()
+        width: $("##{@name}").width()
+        height: $("##{@name}").height()
       @lineG = @svg.append("g")
+      @lineG.attr("transform","translate(#{@margin.left},#{@margin.top})")
       @path = @lineG.append("path")
 
     x = d3.time.scale()
-      .range([0,@svg.attr("width")])
+      .range([0,@svg.attr("width") - (@margin.left + @margin.right)])
       .domain(d3.extent(@points, (d) -> d.timestamp))
 
     y = d3.scale.linear()
-      .range([@svg.attr("height"),0])
+      .range([@svg.attr("height") - (@margin.top + @margin.bottom),0])
       .domain([0,d3.max(@points, (d) -> d.value)])
 
     line = d3.svg.line()

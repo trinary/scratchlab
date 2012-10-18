@@ -20,26 +20,33 @@
 
     LoadAverage.prototype.name = "loadavg";
 
+    LoadAverage.prototype.margin = {
+      left: 40,
+      right: 40,
+      top: 40,
+      bottom: 40
+    };
+
     LoadAverage.prototype.data = function(data, elem) {
       var line, x, y;
       this.points.push(data);
-      console.log(this.points.length);
       if (this.points.length > 200) {
         this.points = this.points.slice(this.points.length - 200);
       }
       if (this.svg === null) {
         this.svg = d3.select("#" + this.name).append("svg");
         this.svg.attr({
-          width: elem.width(),
-          height: elem.height()
+          width: $("#" + this.name).width(),
+          height: $("#" + this.name).height()
         });
         this.lineG = this.svg.append("g");
+        this.lineG.attr("transform", "translate(" + this.margin.left + "," + this.margin.top + ")");
         this.path = this.lineG.append("path");
       }
-      x = d3.time.scale().range([0, this.svg.attr("width")]).domain(d3.extent(this.points, function(d) {
+      x = d3.time.scale().range([0, this.svg.attr("width") - (this.margin.left + this.margin.right)]).domain(d3.extent(this.points, function(d) {
         return d.timestamp;
       }));
-      y = d3.scale.linear().range([this.svg.attr("height"), 0]).domain([
+      y = d3.scale.linear().range([this.svg.attr("height") - (this.margin.top + this.margin.bottom), 0]).domain([
         0, d3.max(this.points, function(d) {
           return d.value;
         })
