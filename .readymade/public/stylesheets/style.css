@@ -27,3 +27,7 @@ section {
 
 .text {
   color: blue; }
+
+.load-avg-line {
+  stroke: #333333;
+  fill: none; }
