@@ -5,16 +5,29 @@ body {
 a {
   color: #00b7ff; }
 
+section {
+  width: 400px; }
+
 .view {
   display: -webkit-flex;
   display: flex;
-  flex-flow: column wrap-reverse;
-  border: 1px solid #666666;
+  -webkit-flex-flow: column wrap-reverse;
   width: 960px;
-  height: 960px; }
+  height: 640px;
+  overflow: hidden; }
 
 .handler {
-  border: 1px solid #333333; }
+  border: 1px solid #999999;
+  overflow: auto;
+  -webkit-flex: 1 0 20px; }
+
+.primary {
+  -webkit-flex: 2 0; }
 
 .text {
   color: blue; }
+
+.load-avg-line {
+  stroke: #3b64a2;
+  stroke-width: 3px;
+  fill: none; }
