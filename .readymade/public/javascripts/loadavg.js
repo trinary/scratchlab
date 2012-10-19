@@ -56,7 +56,7 @@
       }).y(function(d) {
         return y(d.value);
       });
-      return this.path.datum(this.points).attr("class", "load-avg-line").attr("d", line);
+      return this.path.datum(this.points).attr("class", "load-avg-line").attr("d", line).transition().duration(100);
     };
 
     return LoadAverage;

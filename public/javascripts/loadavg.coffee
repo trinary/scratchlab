@@ -39,5 +39,7 @@ class LoadAverage
     @path.datum(@points)
       .attr("class","load-avg-line")
       .attr("d",line)
+      .transition()
+      .duration(100)
 
 window.handlerTypes.push LoadAverage
