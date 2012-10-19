@@ -8,6 +8,7 @@ a {
 .view {
   display: -webkit-flex;
   display: flex;
+  flex-flow: column wrap-reverse;
   border: 1px solid #666666;
   width: 960px;
   height: 960px; }
