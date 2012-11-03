@@ -9,21 +9,12 @@ section {
   width: 400px; }
 
 .view {
-  display: -webkit-flex;
-  display: flex;
-  -webkit-flex-flow: column wrap-reverse;
   width: 960px;
-  height: 640px;
-  overflow: hidden;
   border: 1px solid #aaaaaa; }
 
 .handler {
   border: 1px solid #999999;
-  overflow: auto;
-  -webkit-flex: 1 0 20px; }
-
-.primary {
-  -webkit-flex: 2 0; }
+  overflow: auto; }
 
 .text {
   color: blue; }
