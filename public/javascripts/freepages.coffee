@@ -1,9 +1,9 @@
-class LoadAverage
+class FreePages
 
   svg: null
   points: []
   handles: ["freepages"]
-  name: "loadavg"
+  name: "freepages"
   margin:
     left: 40
     right: 40
@@ -42,4 +42,4 @@ class LoadAverage
       .transition()
       .duration(100)
 
-window.handlerTypes.push LoadAverage
+window.handlerTypes.push FreePages
