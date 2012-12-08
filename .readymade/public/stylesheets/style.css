@@ -10,6 +10,7 @@ section {
 
 .view {
   width: 960px;
+  height: 360px;
   border: 1px solid #aaaaaa; }
 
 .handler {
