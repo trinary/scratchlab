@@ -28,7 +28,7 @@
     };
 
     TimeLine.prototype.data = function(data, elem) {
-      var line, x, y;
+      var line, x, xaxis, y, yaxis;
       this.points.push(data);
       if (this.points.length > 200) {
         this.points = this.points.slice(this.points.length - 200);
@@ -51,6 +51,10 @@
           return d.value;
         })
       ]);
+      xaxis = d3.svg.axis().scale(x).orient("bottom");
+      yaxis = d3.svg.axis().scale(y).orient("left");
+      this.svg.append("g").attr("class", "x axis").attr("transform", "translate(0," + (this.svg.attr("height") - this.margin.bottom) + ")").call(xaxis);
+      this.svg.append("g").attr("class", "y axis").call(yaxis);
       line = d3.svg.line().x(function(d) {
         return x(d.timestamp);
       }).y(function(d) {

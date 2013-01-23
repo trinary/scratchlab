@@ -31,6 +31,19 @@ class TimeLine
       .range([@svg.attr("height") - (@margin.top + @margin.bottom),0])
       .domain([0,d3.max(@points, (d) -> d.value)])
 
+    xaxis = d3.svg.axis()
+              .scale(x)
+              .orient("bottom")
+
+    yaxis = d3.svg.axis()
+              .scale(y)
+              .orient("left")
+
+    @svg.append("g")
+        .attr("class","x axis")
+        .attr("transform","translate(0,#{@svg.attr("height") - @margin.bottom})")
+        .call(xaxis)
+
     line = d3.svg.line()
       .x( (d) -> x d.timestamp)
       .y( (d) -> y d.value)
