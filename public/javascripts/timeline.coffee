@@ -1,9 +1,9 @@
-class LoadAverage
+class TimeLine
 
   svg: null
   points: []
-  handles: ["loadavg"]
-  name: "loadavg"
+  handles: ["timeline"]
+  name: "timeline"
   margin:
     left: 40
     right: 40
@@ -37,9 +37,9 @@ class LoadAverage
 
 
     @path.datum(@points)
-      .attr("class","load-avg-line")
+      .attr("class","time-line")
       .attr("d",line)
       .transition()
       .duration(100)
 
-window.handlerTypes.push LoadAverage
+window.handlerTypes.push TimeLine

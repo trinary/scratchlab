@@ -20,7 +20,7 @@ section {
 .text {
   color: blue; }
 
-.load-avg-line {
+.time-line {
   stroke: #3b64a2;
   stroke-width: 3px;
   fill: none; }
