@@ -4,24 +4,26 @@ class TimeLine
   points: []
   handles: ["timeline"]
   name: "timeline"
+  initialized: false
   margin:
     left: 40
     right: 40
     top: 40
     bottom:40
 
-  data: (data, elem) =>
-    @points.push data
-    @points = @points.slice(@points.length - 200) if @points.length > 200
-    if @svg == null
-      @svg = d3.select("##{@name}")
-        .append "svg"
-      @svg.attr
-        width: $("##{@name}").width()
-        height: $("##{@name}").height()
-      @lineG = @svg.append("g")
-      @lineG.attr("transform","translate(#{@margin.left},#{@margin.top})")
-      @path = @lineG.append("path")
+  setup: (elem) =>
+    console.log "initializing wat the fUCK "
+    @initialized = true
+    console.log "whoa"
+    @svg = d3.select("##{@name}")
+      .append "svg"
+    @svg.attr
+      width: $("##{@name}").width()
+      height: $("##{@name}").height()
+    @lineG = @svg.append("g")
+    @lineG.attr("transform","translate(#{@margin.left},#{@margin.top})")
+    @path = @lineG.append("path")
+    console.log @path
 
     x = d3.time.scale()
       .range([0,@svg.attr("width") - (@margin.left + @margin.right)])
@@ -41,8 +43,14 @@ class TimeLine
 
     @svg.append("g")
         .attr("class","x axis")
-        .attr("transform","translate(0,#{@svg.attr("height") - @margin.bottom})")
+        .attr("transform","translate(#{@margin.left},#{@svg.attr("height") - @margin.bottom})")
         .call(xaxis)
+    console.log "done, #{@path}"
+
+  data: (data, elem) =>
+    console.log "data"
+    @points.push data
+    @points = @points.slice(@points.length - 200) if @points.length > 200
 
     line = d3.svg.line()
       .x( (d) -> x d.timestamp)
