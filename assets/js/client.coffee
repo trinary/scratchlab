@@ -12,7 +12,6 @@ $ ->
     , 5000
 
   socket.on 'data', (data) ->
-    console.log data
     type = data.type
     for h in window.handlers
       name = h.name
