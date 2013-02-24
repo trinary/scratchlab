@@ -37,7 +37,7 @@ class TimeLine
     @line = d3.svg.line()
       .x( (d) => @x d.timestamp)
       .y( (d) => @y d.value)
-      
+
     @path = @lineG.append("path")
       .data([@points])
       .attr("class","time-line")
