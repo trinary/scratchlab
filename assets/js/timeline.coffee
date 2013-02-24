@@ -19,9 +19,6 @@ class TimeLine
       width: $("##{@name}").width()
       height: $("##{@name}").height()
 
-    @updateScales()
-    @updateAxes()
-
     @lineG = @svg.append("g")
     @lineG.attr("transform","translate(#{@margin.left},#{@margin.top})")
 
