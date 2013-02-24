@@ -18,9 +18,6 @@ class TimeLine
     @svg.attr
       width: $("##{@name}").width()
       height: $("##{@name}").height()
-    @lineG = @svg.append("g")
-    @lineG.attr("transform","translate(#{@margin.left},#{@margin.top})")
-    @path = @lineG.append("path")
 
     @updateScales()
     @updateAxes()
@@ -29,6 +26,22 @@ class TimeLine
         .attr("class","x axis")
         .attr("transform","translate(#{@margin.left},#{@svg.attr("height") - @margin.bottom})")
         .call(@xaxis)
+    @svg.append("g")
+        .attr("class","y axis")
+        .attr("transform","translate(#{@margin.left},#{@margin.top})")
+        .call(@yaxis)
+
+    @lineG = @svg.append("g")
+    @lineG.attr("transform","translate(#{@margin.left},#{@margin.top})")
+
+    @line = d3.svg.line()
+      .x( (d) => @x d.timestamp)
+      .y( (d) => @y d.value)
+      
+    @path = @lineG.append("path")
+      .data([@points])
+      .attr("class","time-line")
+      .attr("d",@line)
 
   updateScales: =>
     @x = d3.time.scale()
@@ -51,19 +64,11 @@ class TimeLine
 
   data: (data, elem) =>
     @points.push data
-    @points = @points.slice(@points.length - 200) if @points.length > 200
     @updateScales()
     @updateAxes()
 
-    line = d3.svg.line()
-      .x( (d) => @x d.timestamp)
-      .y( (d) => @y d.value)
-
-    @path.datum(@points)
-      .attr("class","time-line")
-      .attr("d",line)
-      .transition()
-      .duration(100)
+    @path.attr("d", @line)
+    @points = @points.slice(@points.length - 200) if @points.length > 200
 
 
 window.handlerTypes.push TimeLine
