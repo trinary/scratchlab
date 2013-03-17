@@ -6,7 +6,7 @@
 
 Nodemon is handy for reloading the server when anything changes.
 
-## To Use (consider this Readme Driven Development):
+## To Use
 
  * Fork
  * Run your repo somewhere
