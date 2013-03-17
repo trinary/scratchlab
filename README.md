@@ -35,8 +35,7 @@ Nodemon is handy for reloading the server when anything changes.
         }
     }
 ```
- * Write some code to interpret and take action that data
-    Here's roughly what d3 line chart is like:
+ * Write some code to interpret and take action that data. Here's roughly what d3 line chart is like:
 ```coffeescript
     class TimeLine
         @handles: ["timeline"]
