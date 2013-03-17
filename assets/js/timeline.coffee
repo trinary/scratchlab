@@ -81,9 +81,7 @@ class TimeLine
   data: (data, elem) =>
     @points.push data
     if @points.length > 20
-      console.log "Slicing, length = #{@points.length}"
       @points = @points.slice(-20)
-      console.log @points
 
     @clearAxes()
     @updateScales()
@@ -91,7 +89,9 @@ class TimeLine
     @drawAxes()
     @updateLine()
 
-    @path.attr("d", @line)
+    @path = d3.select(".time-line")
+      .data([@points])
+      .attr("d", (d) => @line d)
 
     console.log @line(@points)
 
