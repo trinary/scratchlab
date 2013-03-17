@@ -22,12 +22,9 @@ class Scatter
       width: $("##{@name}").width()
       height: $("##{@name}").height()
 
-    @lineG = @svg.append("g")
-    @lineG.attr("transform","translate(#{@margin.left},#{@margin.top})")
-
-    @g = @lineG.append("g")
-      .data(@points)
+    @g = @svg.append("g")
       .attr("class","scatter")
+      .attr("transform","translate(#{@margin.left},#{@margin.top})")
 
   updateScales: ->
     @x = d3.scale.linear()
@@ -42,6 +39,7 @@ class Scatter
     @xaxis = d3.svg.axis()
               .scale(@x)
               .orient("bottom")
+              .tickFormat(d3.format('0.2s'))
 
     @yaxis = d3.svg.axis()
               .scale(@y)
@@ -73,7 +71,8 @@ class Scatter
         .attr("class","y axis")
         .attr("transform","translate(#{@margin.left},#{@margin.top})")
         .call(@yaxis)
-
+  clearScatter: ->
+    @svg.selectAll('.dot').remove()
 
   data: (data) ->
     @points = new Array if @points == null
@@ -85,13 +84,15 @@ class Scatter
     @updateScales()
     @updateAxes()
     @drawAxes()
+    @clearScatter()
 
-    @svg.selectAll(".scatter")
+    scatter = @g.selectAll(".dot")
       .data(@points)
       .enter()
       .append("circle")
-      .attr("cx", (d) => d.x)
-      .attr("cy", (d) => d.y)
+      .attr("cx", (d) => @x d.x)
+      .attr("cy", (d) => @y d.y)
       .attr("r", 5)
+      .classed("dot","true")
 
 window.handlerTypes.push Scatter

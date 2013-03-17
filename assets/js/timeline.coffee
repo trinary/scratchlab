@@ -26,7 +26,6 @@ class TimeLine
     @lineG.attr("transform","translate(#{@margin.left},#{@margin.top})")
 
     @path = @lineG.append("path")
-      .data([@points])
       .attr("class","timeline")
 
   updateScales: ->
