@@ -35,53 +35,54 @@ Nodemon is handy for reloading the server when anything changes.
         }
     }
 ```
- * Write some code to interpret and take action that data (real examples coming - TODO)
+ * Write some code to interpret and take action that data
+    Here's roughly what d3 line chart is like:
 ```coffeescript
-class TimeLine
-  @handles: ["timeline"]
-  svg: null
-  points: null
-  type: "timeline"
-  name: ""
-  initialized: false
-  margin:
-    left: 60
-    right: 40
-    top: 40
-    bottom:40
+    class TimeLine
+        @handles: ["timeline"]
+        svg: null
+        points: null
+        type: "timeline"
+        name: ""
+        initialized: false
+        margin:
+            left: 60
+            right: 40
+            top: 40
+            bottom:40
 
-  constructor: (name) ->
-    @name = name
+        constructor: (name) ->
+            @name = name
 
-  setup: () ->
-    @initialized = true
-    @svg = d3.select("##{@name}")
-      .append "svg"
-    @svg.attr
-      width: $("##{@name}").width()
-      height: $("##{@name}").height()
+        setup: () ->
+            @initialized = true
+            @svg = d3.select("##{@name}")
+              .append "svg"
+            @svg.attr
+              width: $("##{@name}").width()
+              height: $("##{@name}").height()
 
-    @lineG = @svg.append("g")
-    @lineG.attr("transform","translate(#{@margin.left},#{@margin.top})")
+            @lineG = @svg.append("g")
+            @lineG.attr("transform","translate(#{@margin.left},#{@margin.top})")
 
-    @path = @lineG.append("path")
-      .data([@points])
-      .attr("class","timeline")
-  data: (data) ->
-    @points = new Array if @points == null
-    @points.push data
-    if @points.length > 200
-      @points = @points.slice(-200)
+            @path = @lineG.append("path")
+              .data([@points])
+              .attr("class","timeline")
+        data: (data) ->
+            @points = new Array if @points == null
+            @points.push data
+            if @points.length > 200
+              @points = @points.slice(-200)
 
-    @clearAxes()
-    @updateScales()
-    @updateAxes()
-    @drawAxes()
-    @updateLine()
+            @clearAxes()
+            @updateScales()
+            @updateAxes()
+            @drawAxes()
+            @updateLine()
 
-    @path = @svg.select(".timeline")
-      .data([@points])
-      .attr("d", (d) => @line d)
+            @path = @svg.select(".timeline")
+              .data([@points])
+              .attr("d", (d) => @line d)
 
-window.handlerTypes.push TimeLine
+    window.handlerTypes.push TimeLine
 ```
