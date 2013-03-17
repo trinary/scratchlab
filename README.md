@@ -25,13 +25,19 @@ Nodemon is handy for reloading the server when anything changes.
  * See what data types the system knows about and an example doc for each
 
 ```
-   GET /types
-   {
-        "type":"text"
-        "example": {
-            "type":"text",
-            "name":"example",
-            "content":"This is an example of a datatype example."
+    GET /types
+    {
+      "scatter": {
+          "name": "random-scatter",
+          "type": "scatter",
+          "x": 21144,
+          "y": 27267
+      },
+      "timeline": {
+          "name": "loadavg",
+          "timestamp": 1363560058920,
+          "type": "timeline",
+          "value": 1.75
         }
     }
 ```
