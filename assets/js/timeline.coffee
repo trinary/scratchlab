@@ -90,7 +90,7 @@ class TimeLine
     @drawAxes()
     @updateLine()
 
-    @path = d3.select(".time-line")
+    @path = @svg.select(".time-line")
       .data([@points])
       .attr("d", (d) => @line d)
 
