@@ -45,4 +45,3 @@ class LineChart
   data: (d, e) ->
     e.append d.content
 ```
- * Push your code to your repo, and everyone using it will see its effects immediately. (TODO)

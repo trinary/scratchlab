@@ -1,12 +1,12 @@
 class TimeLine
   @handles: ["timeline"]
   svg: null
-  points: []
+  points: null
   type: "timeline"
   name: ""
   initialized: false
   margin:
-    left: 40
+    left: 60
     right: 40
     top: 40
     bottom:40
@@ -14,9 +14,8 @@ class TimeLine
   constructor: (name) ->
     @name = name
 
-  setup: () =>
+  setup: () ->
     @initialized = true
-    console.log @name
     @svg = d3.select("##{@name}")
       .append "svg"
     @svg.attr
@@ -28,9 +27,9 @@ class TimeLine
 
     @path = @lineG.append("path")
       .data([@points])
-      .attr("class","time-line")
+      .attr("class","timeline")
 
-  updateScales: =>
+  updateScales: ->
     @x = d3.time.scale()
       .range([0,@svg.attr("width") - (@margin.left + @margin.right)])
       .domain(d3.extent(@points, (d) -> d.timestamp))
@@ -39,7 +38,7 @@ class TimeLine
       .range([@svg.attr("height") - (@margin.top + @margin.bottom),0])
       .domain([0,d3.max(@points, (d) -> d.value)])
 
-  updateAxes: =>
+  updateAxes: ->
     @xaxis = d3.svg.axis()
               .scale(@x)
               .orient("bottom")
@@ -47,39 +46,41 @@ class TimeLine
     @yaxis = d3.svg.axis()
               .scale(@y)
               .orient("left")
+              .tickFormat(d3.format('0.2s'))
 
-  clearAxes: =>
+  clearAxes: ->
     @clearXAxis()
     @clearYAxis()
 
-  drawAxes: =>
+  drawAxes: ->
     @drawXAxis()
     @drawYAxis()
 
-  clearXAxis: =>
+  clearXAxis: ->
     @svg.select(".x.axis").remove()
 
-  clearYAxis: =>
+  clearYAxis: ->
     @svg.select(".y.axis").remove()
 
-  drawXAxis: =>
+  drawXAxis: ->
     @svg.append("g")
         .attr("class","x axis")
         .attr("transform","translate(#{@margin.left},#{@svg.attr("height") - @margin.bottom})")
         .call(@xaxis)
 
-  drawYAxis: =>
+  drawYAxis: ->
     @svg.append("g")
         .attr("class","y axis")
         .attr("transform","translate(#{@margin.left},#{@margin.top})")
         .call(@yaxis)
 
-  updateLine: =>
+  updateLine: ->
     @line = d3.svg.line()
       .x( (d) => @x d.timestamp)
       .y( (d) => @y d.value)
 
-  data: (data, elem) =>
+  data: (data) ->
+    @points = new Array if @points == null
     @points.push data
     if @points.length > 200
       @points = @points.slice(-200)
@@ -90,7 +91,7 @@ class TimeLine
     @drawAxes()
     @updateLine()
 
-    @path = @svg.select(".time-line")
+    @path = @svg.select(".timeline")
       .data([@points])
       .attr("d", (d) => @line d)
 

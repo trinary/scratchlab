@@ -15,7 +15,6 @@ $ ->
     for h in window.handlerTypes
       view = $('.view')
       target = view.find("##{dataName}") 
-      console.log target
       target = $("<div class=\"handler #{h.name}\" id=\"#{dataName}\"></div>").appendTo view unless target.length > 0
       if _.contains h.handles, data.type
         unless window.views[dataName]
