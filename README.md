@@ -38,7 +38,7 @@ Nodemon is handy for reloading the server when anything changes.
           "timestamp": 1363560058920,
           "type": "timeline",
           "value": 1.75
-        }
+      }
     }
 ```
  * Write some code to interpret and take action that data. Here's roughly what a d3 line chart in coffeescript is like:
