@@ -1,9 +1,7 @@
 $ ->
   socket = io.connect window.location
 
-  window.handlers = []
-  for t in window.handlerTypes
-    window.handlers.push new t
+  window.views = []
 
   socket.on 'reload', (what) -> 
     $('.flash').append "<div class='warning'>New Code recieved, reloading...</div>"
@@ -13,12 +11,15 @@ $ ->
 
   socket.on 'data', (data) ->
     type = data.type
-    for h in window.handlers
-      name = h.name
+    dataName = data.name
+    for h in window.handlerTypes
       view = $('.view')
-      target = view.find("##{name}") 
-      target = $("<div class=\"handler\" id=\"#{name}\"></div>").appendTo view unless target.length > 0
+      target = view.find("##{dataName}") 
+      target = $("<div class=\"handler #{h.name}\" id=\"#{dataName}\"></div>").appendTo view unless target.length > 0
+      console.log h.handles, data.type
       if _.contains h.handles, data.type
-        h.setup() unless h.initialized
-        h.data(data, target) 
+        unless window.views[dataName]
+          window.views[dataName] = new h(dataName)
+          window.views[dataName].setup() 
+        window.views[dataName].data(data)
 
