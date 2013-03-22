@@ -13,12 +13,10 @@ $ ->
     type = data.type
     dataName = data.name
     for h in window.handlerTypes
-      console.log h
       view = $('.view')
       target = view.find("##{dataName}") 
       target = $("<div class=\"handler #{h.name}\" id=\"#{dataName}\"></div>").appendTo view unless target.length > 0
       if _.contains h.handles, data.type
-        console.log data.type
         unless window.views[dataName]
           window.views[dataName] = new h(dataName)
           window.views[dataName].setup() 
