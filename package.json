@@ -12,5 +12,31 @@
     "zlib": "~1.0.5",
     "connect-assets": "~2.3.3",
     "less": "~1.3.3"
-  }
+  },
+  "gitHead": "9fded4c8b2d6ad95b44138f3c07e13c664033172",
+  "readmeFilename": "README.md",
+  "description": "## To run  * npm install  * coffee app.coffee",
+  "main": "app.coffee",
+  "devDependencies": {
+    "coffee-script": "~1.3.3"
+  },
+  "scripts": {
+    "test": "vows"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/trinary/scratchlab.git"
+  },
+  "keywords": [
+    "d3",
+    "datavis",
+    "chart",
+    "graph",
+    "websocket",
+    "socket.io",
+    "monitoring",
+    "metric"
+  ],
+  "author": "Erik Cunningham",
+  "license": "MIT"
 }
