@@ -36,21 +36,27 @@ if key
 else
   auth = express.basicAuth (user, pass) -> true
 # Routes
+dataPost = (req,res) ->
+  unless types[req.body.type]
+    types[req.body.type] = req.body
+  io.sockets.emit 'data', req.body
+  res.status(201).json({status: "created"})
+
+updatePost = (req, res) ->
+  io.sockets.emit 'reload', {target: "all"}
+  res.status(200).json({status: "reloaded"})
 
 app.get '/', routes.index 
 
 app.get '/types', (req, res) ->
   res.status(200).json types
 
-app.post '/data', auth, (req,res) ->
-  unless types[req.body.type]
-    types[req.body.type] = req.body
-  io.sockets.emit 'data', req.body
-  res.status(201).json({status: "created"})
-
-app.post '/update', auth, (req, res) ->
-  io.sockets.emit 'reload', {target: "all"}
-  res.status(200).json({status: "reloaded"})
+if key
+  app.post '/data', auth, dataPost
+  app.post '/update', auth, updatePost
+else
+  app.post '/data', dataPost
+  app.post '/update', updatePost
 
 io.sockets.on 'connection', (socket) ->
   socket.on 'new code', (data) ->
