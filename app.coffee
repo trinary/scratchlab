@@ -5,8 +5,10 @@ socket = require('socket.io')
 app = module.exports = express.createServer()
 io = socket.listen(app)
 
-port = process.env.PORT || 3000
-console.log port
+port = process.env.SCRATCHLAB_PORT || 3000
+
+key = process.env.SCRATCHLAB_KEY || "example"
+console.log key
 
 types = {}
 
@@ -27,26 +29,36 @@ app.configure 'development', ->
 app.configure 'production', ->
   app.use express.errorHandler()
 
+
+if key
+  auth = express.basicAuth (user, pass) -> 
+    !key || key == user
+else
+  auth = express.basicAuth (user, pass) -> true
 # Routes
+dataPost = (req,res) ->
+  unless types[req.body.type]
+    types[req.body.type] = req.body
+  io.sockets.emit 'data', req.body
+  res.status(201).json({status: "created"})
+
+updatePost = (req, res) ->
+  io.sockets.emit 'reload', {target: "all"}
+  res.status(200).json({status: "reloaded"})
 
 app.get '/', routes.index 
 
 app.get '/types', (req, res) ->
   res.status(200).json types
 
-app.post '/data', (req,res) ->
-  unless types[req.body.type]
-    types[req.body.type] = req.body
-  io.sockets.emit 'data', req.body
-  res.status(201).json({status: "created"})
-
-app.post '/update', (req, res) ->
-  io.sockets.emit 'reload', {target: "all"}
-  res.status(200).json({status: "reloaded"})
+if key
+  app.post '/data', auth, dataPost
+  app.post '/update', auth, updatePost
+else
+  app.post '/data', dataPost
+  app.post '/update', updatePost
 
 io.sockets.on 'connection', (socket) ->
-  socket.on 'my other event', (data) ->
-    console.log(data)
   socket.on 'new code', (data) ->
     socket.emit 'reload', {target: "all"}
 
