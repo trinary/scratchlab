@@ -5,8 +5,10 @@ socket = require('socket.io')
 app = module.exports = express.createServer()
 io = socket.listen(app)
 
-port = process.env.PORT || 3000
-console.log port
+port = process.env.SCRATCHLAB_PORT || 3000
+
+key = process.env.SCRATCHLAB_KEY || false
+console.log key
 
 types = {}
 
@@ -27,6 +29,12 @@ app.configure 'development', ->
 app.configure 'production', ->
   app.use express.errorHandler()
 
+
+if key
+  auth = express.basicAuth (user, pass) -> 
+    !key || key == user
+else
+  auth = (user, pass) -> return true
 # Routes
 
 app.get '/', routes.index 
@@ -34,13 +42,13 @@ app.get '/', routes.index
 app.get '/types', (req, res) ->
   res.status(200).json types
 
-app.post '/data', (req,res) ->
+app.post '/data', auth, (req,res) ->
   unless types[req.body.type]
     types[req.body.type] = req.body
   io.sockets.emit 'data', req.body
   res.status(201).json({status: "created"})
 
-app.post '/update', (req, res) ->
+app.post '/update', auth, (req, res) ->
   io.sockets.emit 'reload', {target: "all"}
   res.status(200).json({status: "reloaded"})
 
