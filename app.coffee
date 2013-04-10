@@ -7,7 +7,7 @@ io = socket.listen(app)
 
 port = process.env.SCRATCHLAB_PORT || 3000
 
-key = process.env.SCRATCHLAB_KEY || false
+key = process.env.SCRATCHLAB_KEY || "example"
 console.log key
 
 types = {}
@@ -34,7 +34,7 @@ if key
   auth = express.basicAuth (user, pass) -> 
     !key || key == user
 else
-  auth = (user, pass) -> return true
+  auth = express.basicAuth (user, pass) -> true
 # Routes
 
 app.get '/', routes.index 
@@ -53,8 +53,6 @@ app.post '/update', auth, (req, res) ->
   res.status(200).json({status: "reloaded"})
 
 io.sockets.on 'connection', (socket) ->
-  socket.on 'my other event', (data) ->
-    console.log(data)
   socket.on 'new code', (data) ->
     socket.emit 'reload', {target: "all"}
 
