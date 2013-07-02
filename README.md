@@ -15,10 +15,10 @@ Nodemon is handy for reloading the server when anything changes.
 ```
     POST /data
     {
-       "type":"timeseries",
+       "type":"timeline",
        "name":"loadavg",
        "value":1.2,
-       "time":1348961737
+       "timestamp":1348961737000
     }
 ```
 
@@ -37,7 +37,7 @@ Nodemon is handy for reloading the server when anything changes.
           "name": "loadavg",
           "timestamp": 1363560058920,
           "type": "timeline",
-          "value": 1.75
+          "value": 1.2
       }
     }
 ```

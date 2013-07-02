@@ -6,7 +6,10 @@ crypto = require('crypto')
 app = module.exports = express.createServer()
 io = socket.listen(app)
 
-port = process.env.PORT || 3000
+port = process.env.SCRATCHLAB_PORT || 3000
+
+key = process.env.SCRATCHLAB_KEY || "example"
+console.log key
 
 types = {}
 channels = {}
@@ -57,6 +60,11 @@ app.post '/data', (req,res) ->
 app.post '/update', (req, res) ->
   io.sockets.emit 'reload', {target: "all"}
   res.status(200).json {status: "reloaded"}
+
+app.get '/', routes.index 
+
+app.get '/types', (req, res) ->
+  res.status(200).json types
 
 io.sockets.on 'connection', (socket) ->
   socket.on 'new code', (data) ->
