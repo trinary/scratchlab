@@ -16,7 +16,6 @@ server = http.createServer(app)
 io = socket.listen(server)
 
 types = {}
-channels = {}
 clients = {}
 
 # Configuration
@@ -60,8 +59,7 @@ app.post '/new', cors(), (req, res) ->
   name = req.body.name
   id = crypto.randomBytes(20).toString('hex')
   key= crypto.randomBytes(10).toString('hex')
-  channels[id] = {id: id, name: name, key: key}
-  rClient.set(id, JSON.stringify(channels[id]))
+  rClient.set(id, JSON.stringify({id: id, name: name, key: key}))
   res.redirect("/channels/#{id}")
 
 app.post '/channels/:id/data', cors(), (req,res) ->
