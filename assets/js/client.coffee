@@ -15,6 +15,7 @@ $ ->
     , 5000
 
   socket.on 'data', (data) ->
+    console.log(data);
     type = data.type
     dataName = data.name
     for h in window.handlerTypes

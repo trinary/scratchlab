@@ -1,7 +1,9 @@
 extends layout
 
 block content
-  h1 ScratchLab - Channel #{channel.name} - #{channel.id}
+  h1 ScratchLab - Channel #{channel.name} 
+  h3 ID: #{channel.id}
+  h3 Key: #{channel.key}
   p
     a(href="http://github.com/trinary/scratchlab#readme") What is this?
 
