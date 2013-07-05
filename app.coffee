@@ -23,7 +23,6 @@ app.configure ->
   app.set 'view engine', 'jade'
   app.use express.bodyParser()
   app.use express.methodOverride()
-  app.use app.router
   app.use express.static(__dirname + '/public')
   app.use require('connect-assets')()
 
@@ -32,6 +31,8 @@ app.configure 'development', ->
 
 app.configure 'production', ->
   app.use express.errorHandler()
+
+app.use app.router
 
 # Routes
 #
@@ -48,7 +49,7 @@ app.get '/channels/:id', cors(), (req, res) ->
   if (! channel)
     res.send(404, "Sorry, channel not found")
   else
-    res.render 'show', { title: channel.name, channel: channel.id }
+    res.render 'show', { title: channel.name, channel: channel }
 
 app.post '/new', cors(), (req, res) ->
   name = req.body.name
