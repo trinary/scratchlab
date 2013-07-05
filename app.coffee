@@ -1,6 +1,7 @@
 express = require('express')
 routes = require('./routes/')
 socket = require('socket.io')
+cors   = require('cors')
 crypto = require('crypto')
 
 app = module.exports = express.createServer()
@@ -33,38 +34,33 @@ app.configure 'production', ->
 
 # Routes
 #
-app.get '/', routes.index 
+app.get '/', cors(), routes.index 
 
-app.get '/types', (req, res) ->
+app.get '/types', cors(), (req, res) ->
   res.status(200).json types
 
-app.get  '/new', (req, res) -> 
+app.get  '/new', cors(), (req, res) -> 
   res.render 'new', { title: 'ScratchLab' } 
-app.get '/channels/:id', (req, res) -> 
+app.get '/channels/:id', cors(), (req, res) -> 
   channel = channels[req.params.id]
   res.render 'show', { title: channel.name, channel: channel.id }
-app.post '/new', (req, res) ->
+app.post '/new', cors(), (req, res) ->
   name = req.body.name
   id = crypto.randomBytes(20).toString('hex')
-  channels[id] = {id: id, name: name}
+  key= crypto.randomBytes(20).toString('hex')
+  channels[id] = {id: id, name: name, key: key}
   res.redirect("/channels/#{id}")
 
 
-
-app.post '/data', (req,res) ->
+app.post '/channels/:id/data', cors(), (req,res) ->
   unless types[req.body.type]
     types[req.body.type] = req.body
   io.sockets.emit 'data', req.body
   res.status(201).json {status: "created"}
 
-app.post '/update', (req, res) ->
+app.post '/update', cors(), (req, res) ->
   io.sockets.emit 'reload', {target: "all"}
   res.status(200).json {status: "reloaded"}
-
-app.get '/', routes.index 
-
-app.get '/types', (req, res) ->
-  res.status(200).json types
 
 io.sockets.on 'connection', (socket) ->
   socket.on 'new code', (data) ->
