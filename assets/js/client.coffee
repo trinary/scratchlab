@@ -3,6 +3,11 @@ $ ->
 
   window.views = []
 
+  socket.on 'connect', () ->
+    paths = window.location.pathname.split '/'
+    id = paths[paths.length-1]
+    socket.send('assoc', { channel: id })
+
   socket.on 'reload', (what) -> 
     $('.flash').append "<div class='warning'>New Code recieved, reloading...</div>"
     setTimeout ->

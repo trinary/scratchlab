@@ -1,19 +1,20 @@
 express = require('express')
-routes = require('./routes/')
-socket = require('socket.io')
-cors   = require('cors')
-crypto = require('crypto')
+routes  = require('./routes/')
+socket  = require('socket.io')
+cors    = require('cors')
+http    = require('http')
+crypto  = require('crypto')
 
-app = module.exports = express.createServer()
-io = socket.listen(app)
 
 port = process.env.SCRATCHLAB_PORT || 3000
 
-key = process.env.SCRATCHLAB_KEY || "example"
-console.log key
+app = express()
+server = http.createServer(app)
+io = socket.listen(server)
 
 types = {}
 channels = {}
+clients = {}
 
 # Configuration
 
@@ -41,16 +42,20 @@ app.get '/types', cors(), (req, res) ->
 
 app.get  '/new', cors(), (req, res) -> 
   res.render 'new', { title: 'ScratchLab' } 
+
 app.get '/channels/:id', cors(), (req, res) -> 
   channel = channels[req.params.id]
-  res.render 'show', { title: channel.name, channel: channel.id }
+  if (! channel)
+    res.send(404, "Sorry, channel not found")
+  else
+    res.render 'show', { title: channel.name, channel: channel.id }
+
 app.post '/new', cors(), (req, res) ->
   name = req.body.name
   id = crypto.randomBytes(20).toString('hex')
   key= crypto.randomBytes(20).toString('hex')
   channels[id] = {id: id, name: name, key: key}
   res.redirect("/channels/#{id}")
-
 
 app.post '/channels/:id/data', cors(), (req,res) ->
   unless types[req.body.type]
@@ -65,8 +70,8 @@ app.post '/update', cors(), (req, res) ->
 io.sockets.on 'connection', (socket) ->
   socket.on 'new code', (data) ->
     socket.emit 'reload', {target: "all"}
+  socket.on 'assoc', (data) ->
+    console.log data
+    clients[data.channel] = 'asdf'
 
-app.listen port,->
-  console.log "Express server listening on port %d in %s mode", 
-    app.address().port, app.settings.env
-
+server.listen(port)
