@@ -52,7 +52,6 @@ app.get '/channels/:id', cors(), (req, res) ->
       res.send(404, "Sorry, channel not found")
     else
       channel = JSON.parse(d)
-      console.log "hello",channel
       res.render 'show', { title: channel.name, channel: channel }
 
 app.post '/new', cors(), (req, res) ->
@@ -64,23 +63,19 @@ app.post '/new', cors(), (req, res) ->
 
 app.post '/channels/:id/data', cors(), (req,res) ->
   channel = rClient.get(req.params.id)
+  room = req.params.id
   if (! channel)
     res.send(404, "Sorry, channel not found")
   else
     unless types[req.body.type]
       types[req.body.type] = req.body
-    io.sockets.emit 'data', req.body
+    io.sockets.in(room).emit('data', req.body)
     res.status(201).json {status: "created"}
-
-app.post '/update', cors(), (req, res) ->
-  io.sockets.emit 'reload', {target: "all"}
-  res.status(200).json {status: "reloaded"}
 
 io.sockets.on 'connection', (socket) ->
   socket.on 'new code', (data) ->
     socket.emit 'reload', {target: "all"}
   socket.on 'assoc', (data) ->
-    console.log "ASSOC",data
-    clients[data.channel] = 'asdf'
+    socket.join data.channel
 
 server.listen(port)
