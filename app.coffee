@@ -56,8 +56,8 @@ app.get '/channels/:id', cors(), (req, res) ->
 
 app.post '/new', cors(), (req, res) ->
   name = req.body.name
-  id = crypto.randomBytes(20).toString('hex')
-  key= crypto.randomBytes(10).toString('hex')
+  id = crypto.randomBytes(12).toString('hex')
+  key= crypto.randomBytes(8).toString('hex')
   rClient.set(id, JSON.stringify({id: id, name: name, key: key}))
   res.redirect("/channels/#{id}")
 
