@@ -1,5 +1,6 @@
 # A collaborative scratch pad for data and code.
 
+
 ## To run
  * npm install
  * coffee app.coffee
@@ -9,8 +10,9 @@ Nodemon is handy for reloading the server when anything changes.
 ## To Use
 
  * Fork
- * Run your repo somewhere
- * Post some data to /data
+ * Run your repo somewhere (requires redis)
+ * Make a new channel (/new)
+ * Post some data to /channels/CHANNEL_ID/data with the channel key as the user
 
 ```
     POST /data
