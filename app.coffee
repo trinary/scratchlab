@@ -65,15 +65,14 @@ app.post '/new', (req, res) ->
   res.redirect("/channels/#{id}")
 
 app.post '/channels/:id/data', trueAuth, (req,res) ->
-  key = "asdf"
-  console.log "request", req
   room = req.params.id
   rClient.get req.params.id, (e,d) ->
     channel = JSON.parse d
     if (! channel)
       res.send(404, "Sorry, channel not found")
     else
-      if (key != channel.key)
+      console.log req.user, channel.key
+      if (req.user != channel.key)
         return res.status(403).json { status: "unauthorized"}
       unless types[req.body.type]
         types[req.body.type] = req.body
