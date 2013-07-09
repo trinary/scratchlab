@@ -4,5 +4,5 @@ while true ; do
   t=`date +%s000`
   l=`uptime | awk '{print $(NF-2)}'`
   doc="{\"type\":\"timeline\", \"name\":\"loadavg\", \"value\": $l, \"timestamp\": $t}"
-  curl -u "example:" -X POST -d "$doc" -H 'Content-Type: application/json' $1
+  curl -u "$2:" -X POST -d "$doc" -H 'Content-Type: application/json' $1
 done

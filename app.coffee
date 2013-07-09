@@ -37,12 +37,7 @@ app.use app.router
 
 # Middleware
 #
-
-checkAuth = (user, pass, next) ->
-  console.log(user, pass)
-  return true
-
-basicAuth = express.basicAuth(checkAuth, "what")
+trueAuth = express.basicAuth (user, pass) -> true
 # Routes
 #
 app.get '/', cors(), routes.index 
@@ -69,7 +64,7 @@ app.post '/new', (req, res) ->
   rClient.set(id, JSON.stringify({id: id, name: name, key: key}))
   res.redirect("/channels/#{id}")
 
-app.post '/channels/:id/data', basicAuth, (req,res) ->
+app.post '/channels/:id/data', trueAuth, (req,res) ->
   key = "asdf"
   console.log "request", req
   room = req.params.id
@@ -79,7 +74,7 @@ app.post '/channels/:id/data', basicAuth, (req,res) ->
       res.send(404, "Sorry, channel not found")
     else
       if (key != channel.key)
-        res.status(403).json { status: "unauthorized"}
+        return res.status(403).json { status: "unauthorized"}
       unless types[req.body.type]
         types[req.body.type] = req.body
       io.sockets.in(room).emit('data', req.body)
