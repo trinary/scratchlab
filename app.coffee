@@ -16,7 +16,6 @@ server = http.createServer(app)
 io = socket.listen(server)
 
 types = {}
-clients = {}
 
 # Configuration
 
@@ -36,6 +35,14 @@ app.configure 'production', ->
 
 app.use app.router
 
+# Middleware
+#
+
+checkAuth = (user, pass, next) ->
+  console.log(user, pass)
+  return true
+
+basicAuth = express.basicAuth(checkAuth, "what")
 # Routes
 #
 app.get '/', cors(), routes.index 
@@ -47,30 +54,36 @@ app.get  '/new', cors(), (req, res) ->
   res.render 'new', { title: 'ScratchLab' } 
 
 app.get '/channels/:id', cors(), (req, res) -> 
-  channel = rClient.get req.params.id, (e, d) ->
+  rClient.get req.params.id, (e, d) ->
+    channel = JSON.parse d
     if (! channel)
       res.send(404, "Sorry, channel not found")
     else
       channel = JSON.parse(d)
       res.render 'show', { title: channel.name, channel: channel }
 
-app.post '/new', cors(), (req, res) ->
+app.post '/new', (req, res) ->
   name = req.body.name
   id = crypto.randomBytes(12).toString('hex')
   key= crypto.randomBytes(8).toString('hex')
   rClient.set(id, JSON.stringify({id: id, name: name, key: key}))
   res.redirect("/channels/#{id}")
 
-app.post '/channels/:id/data', cors(), (req,res) ->
-  channel = rClient.get(req.params.id)
+app.post '/channels/:id/data', basicAuth, (req,res) ->
+  key = "asdf"
+  console.log "request", req
   room = req.params.id
-  if (! channel)
-    res.send(404, "Sorry, channel not found")
-  else
-    unless types[req.body.type]
-      types[req.body.type] = req.body
-    io.sockets.in(room).emit('data', req.body)
-    res.status(201).json {status: "created"}
+  rClient.get req.params.id, (e,d) ->
+    channel = JSON.parse d
+    if (! channel)
+      res.send(404, "Sorry, channel not found")
+    else
+      if (key != channel.key)
+        res.status(403).json { status: "unauthorized"}
+      unless types[req.body.type]
+        types[req.body.type] = req.body
+      io.sockets.in(room).emit('data', req.body)
+      res.status(201).json {status: "created"}
 
 io.sockets.on 'connection', (socket) ->
   socket.on 'new code', (data) ->
