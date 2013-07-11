@@ -1,7 +1,13 @@
 $ ->
-  socket = io.connect window.location
+  loc = window.location.protocol + "//" + window.location.host
+  socket = io.connect loc
 
   window.views = []
+
+  socket.on 'connect', () ->
+    paths = window.location.pathname.split '/'
+    id = paths[paths.length-1]
+    socket.emit('assoc', { channel: id })
 
   socket.on 'reload', (what) -> 
     $('.flash').append "<div class='warning'>New Code recieved, reloading...</div>"

@@ -1,14 +1,19 @@
 express = require('express')
-routes = require('./routes')
-socket = require('socket.io')
+routes  = require('./routes/')
+socket  = require('socket.io')
+cors    = require('cors')
+http    = require('http')
+crypto  = require('crypto')
+redis   = require('redis')
 
-app = module.exports = express.createServer()
-io = socket.listen(app)
+rClient = redis.createClient()
+
 
 port = process.env.SCRATCHLAB_PORT || 3000
 
-key = process.env.SCRATCHLAB_KEY || "example"
-console.log key
+app = express()
+server = http.createServer(app)
+io = socket.listen(server)
 
 types = {}
 
@@ -19,7 +24,6 @@ app.configure ->
   app.set 'view engine', 'jade'
   app.use express.bodyParser()
   app.use express.methodOverride()
-  app.use app.router
   app.use express.static(__dirname + '/public')
   app.use require('connect-assets')()
 
@@ -29,39 +33,56 @@ app.configure 'development', ->
 app.configure 'production', ->
   app.use express.errorHandler()
 
+app.use app.router
 
-if key
-  auth = express.basicAuth (user, pass) -> 
-    !key || key == user
-else
-  auth = express.basicAuth (user, pass) -> true
+# Middleware
+#
+trueAuth = express.basicAuth (user, pass) -> true
 # Routes
-dataPost = (req,res) ->
-  unless types[req.body.type]
-    types[req.body.type] = req.body
-  io.sockets.emit 'data', req.body
-  res.status(201).json({status: "created"})
+#
+app.get '/', cors(), routes.index 
 
-updatePost = (req, res) ->
-  io.sockets.emit 'reload', {target: "all"}
-  res.status(200).json({status: "reloaded"})
-
-app.get '/', routes.index 
-
-app.get '/types', (req, res) ->
+app.get '/types', cors(), (req, res) ->
   res.status(200).json types
 
-if key
-  app.post '/data', auth, dataPost
-  app.post '/update', auth, updatePost
-else
-  app.post '/data', dataPost
-  app.post '/update', updatePost
+app.get  '/new', cors(), (req, res) -> 
+  res.render 'new', { title: 'ScratchLab' } 
+
+app.get '/channels/:id', cors(), (req, res) -> 
+  rClient.get req.params.id, (e, d) ->
+    channel = JSON.parse d
+    if (! channel)
+      res.send(404, "Sorry, channel not found")
+    else
+      channel = JSON.parse(d)
+      res.render 'show', { title: channel.name, channel: channel }
+
+app.post '/new', (req, res) ->
+  name = req.body.name
+  id = crypto.randomBytes(12).toString('hex')
+  key= crypto.randomBytes(8).toString('hex')
+  rClient.set(id, JSON.stringify({id: id, name: name, key: key}))
+  res.redirect("/channels/#{id}")
+
+app.post '/channels/:id/data', trueAuth, (req,res) ->
+  room = req.params.id
+  rClient.get req.params.id, (e,d) ->
+    channel = JSON.parse d
+    if (! channel)
+      res.send(404, "Sorry, channel not found")
+    else
+      console.log req.user, channel.key
+      if (req.user != channel.key)
+        return res.status(403).json { status: "unauthorized"}
+      unless types[req.body.type]
+        types[req.body.type] = req.body
+      io.sockets.in(room).emit('data', req.body)
+      res.status(201).json {status: "created"}
 
 io.sockets.on 'connection', (socket) ->
   socket.on 'new code', (data) ->
     socket.emit 'reload', {target: "all"}
+  socket.on 'assoc', (data) ->
+    socket.join data.channel
 
-app.listen port,->
-  console.log "Express server listening on port %d in %s mode", app.address().port, app.settings.env
-
+server.listen(port)

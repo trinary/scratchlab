@@ -4,5 +4,5 @@ while true ; do
   t=`ruby -e 'puts (Time.now.to_f * 1000).to_i'`
   x=$RANDOM
   y=$RANDOM
-  curl -u "example: " -X POST -d "{\"type\":\"scatter\", \"name\":\"random-scatter\", \"x\": $x, \"y\": $y, \"timestamp\": $t}" -H 'Content-Type: application/json' http://127.0.0.1:3000/data
+  curl -u "example: " -X POST -d "{\"type\":\"scatter\", \"name\":\"random-scatter\", \"x\": $x, \"y\": $y, \"timestamp\": $t}" -H 'Content-Type: application/json' $1
 done

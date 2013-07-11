@@ -1,0 +1,14 @@
+extends layout
+
+block content
+  h1 ScratchLab.
+  p
+    h2 Create a new Channel
+    form(name="new", action="/new", method="POST")
+      label(for="name") Name:
+      input#name(type="text", name="name", autofocus="autofocus")
+      button(type="submit", value="Create") Submit
+
+
+
+
