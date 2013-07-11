@@ -21,7 +21,7 @@ $ ->
     for h in window.handlerTypes
       view = $('.view')
       target = view.find("##{dataName}") 
-      target = $("<div class=\"handler #{h.name}\" id=\"#{dataName}\"></div>").appendTo view unless target.length > 0
+      target = $("<div class=\"handler #{h.name}\" id=\"#{dataName}\"><h3>#{dataName}</h3></div>").appendTo view unless target.length > 0
       if _.contains h.handles, data.type
         unless window.views[dataName]
           window.views[dataName] = new h(dataName)
