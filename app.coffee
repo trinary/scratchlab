@@ -71,7 +71,15 @@ app.get '/login', (req, res) ->
 
 app.get '/auth', (req, res) ->
   code = req.body.code
-
+  request
+    url: "https://github.com/login/oauth/access_token",
+    method: "POST",
+    form:
+      client_id: githubId,
+      client_secret: githubSecret,
+      code: code
+  , (req, res) ->
+    console.log req
 
 
 
