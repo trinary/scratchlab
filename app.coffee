@@ -91,7 +91,7 @@ app.get '/auth', (req, res) ->
         accept: "application/json"
     , (e, r, body) ->
       user = JSON.parse(body)
-      console.log user
+      console.log body, user
     req.session["login"] = user.login
     req.session["avatar"] = user.avatar_url
     res.redirect "/" 
