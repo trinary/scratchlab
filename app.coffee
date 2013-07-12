@@ -71,7 +71,7 @@ app.get '/login', (req, res) ->
 
 app.get '/auth', (req, res) ->
   code = req.param code
-  console.log "code", code
+  console.log req
   request
     url: "https://github.com/login/oauth/access_token",
     method: "POST",
