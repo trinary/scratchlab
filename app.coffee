@@ -3,6 +3,7 @@ routes  = require('./routes/')
 socket  = require('socket.io')
 cors    = require('cors')
 http    = require('http')
+request = require('request')
 crypto  = require('crypto')
 redis   = require('redis')
 
@@ -10,6 +11,9 @@ rClient = redis.createClient()
 
 
 port = process.env.SCRATCHLAB_PORT || 3000
+secret = process.env.SESSION_SECRET || crypto.randomBytes(12).toString('hex')
+githubSecret = process.env.GITHUB_SECRET || ""
+githubId = process.env.GITHUB_ID || "7a56e86c888d930f9d40"
 
 app = express()
 server = http.createServer(app)
@@ -23,6 +27,10 @@ app.configure ->
   app.set 'views', __dirname + '/views'
   app.set 'view engine', 'jade'
   app.use express.bodyParser()
+  app.use express.cookieParser()
+  app.use express.cookieSession({secret: secret})
+  app.use express.session({secret: secret})
+
   app.use express.methodOverride()
   app.use express.static(__dirname + '/public')
   app.use require('connect-assets')()
@@ -56,6 +64,12 @@ app.get '/channels/:id', cors(), (req, res) ->
     else
       channel = JSON.parse(d)
       res.render 'show', { title: channel.name, channel: channel }
+
+app.get '/login', (req, res) ->
+  ghUrl = "https://github.com/login/oauth/authorize?" + "client_id=" + githubId + "&" + "scope=" + "user,gist"
+  res.redirect(ghUrl)
+
+
 
 app.post '/new', (req, res) ->
   name = req.body.name
