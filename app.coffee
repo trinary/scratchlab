@@ -70,8 +70,8 @@ app.get '/login', (req, res) ->
   res.redirect(ghUrl)
 
 app.get '/auth', (req, res) ->
-  code = req.param code
-  console.log req
+  code = req.query.code
+  console.log code
   request
     url: "https://github.com/login/oauth/access_token",
     method: "POST",
