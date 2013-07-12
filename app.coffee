@@ -66,7 +66,7 @@ app.get '/channels/:id', cors(), (req, res) ->
       res.render 'show', { title: channel.name, channel: channel }
 
 app.get '/login', (req, res) ->
-  ghUrl = "https://github.com/login/oauth/authorize?redirect_url=http://scratchlab.io/auth&scope=user,gist&client_id=" + githubId 
+  ghUrl = "https://github.com/login/oauth/authorize?redirect_uri=http://scratchlab.io/auth&scope=user,gist&client_id=" + githubId 
   res.redirect(ghUrl)
 
 app.get '/auth', (req, res) ->
