@@ -92,9 +92,9 @@ app.get '/auth', (req, res) ->
     , (e, r, body) ->
       user = JSON.parse(body)
       console.log body, user
-    req.session["login"] = user.login
-    req.session["avatar"] = user.avatar_url
-    res.redirect "/" 
+      req.session["login"] = user.login
+      req.session["avatar"] = user.avatar_url
+      res.redirect "/" 
 
 app.post '/new', (req, res) ->
   name = req.body.name
