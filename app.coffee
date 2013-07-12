@@ -48,13 +48,14 @@ app.use app.router
 trueAuth = express.basicAuth (user, pass) -> true
 # Routes
 #
-app.get '/', cors(), routes.index 
+app.get '/', cors(), (req, res) -> 
+  res.render 'index', {title: 'ScratchLab', user: req.session["login"], avatar: req.session["avatar"]}
 
 app.get '/types', cors(), (req, res) ->
   res.status(200).json types
 
 app.get  '/new', cors(), (req, res) -> 
-  res.render 'new', { title: 'ScratchLab' } 
+  res.render 'new', { title: 'ScratchLab', user: req.session["login"], avatar: req.session["avatar"] } 
 
 app.get '/channels/:id', cors(), (req, res) -> 
   rClient.get req.params.id, (e, d) ->
@@ -63,7 +64,7 @@ app.get '/channels/:id', cors(), (req, res) ->
       res.send(404, "Sorry, channel not found")
     else
       channel = JSON.parse(d)
-      res.render 'show', { title: channel.name, channel: channel }
+      res.render 'show', { title: channel.name, channel: channel, user: req.session["login"], avatar: req.session["avatar"] }
 
 app.get '/login', (req, res) ->
   ghUrl = "https://github.com/login/oauth/authorize?redirect_uri=http://scratchlab.io/auth&scope=user,gist&client_id=" + githubId 
@@ -75,13 +76,24 @@ app.get '/auth', (req, res) ->
   request
     url: "https://github.com/login/oauth/access_token",
     method: "POST",
+    headers:
+      accept: "application/json"
     form:
       client_id: githubId,
       client_secret: githubSecret,
       code: code
   , (e, r, body ) ->
     console.log body
-    req.session["github"] = body
+    req.session["token"] = JSON.parse(body).access_token
+    request
+      url: "https://api.github.com/user?access_token=" + req.session["token"]
+      headers:
+        accept: "application/json"
+    , (e, r, body) ->
+      user = JSON.parse(body)
+      console.log user
+    req.session["login"] = user.login
+    req.session["avatar"] = user.avatar_url
     res.redirect "/" 
 
 app.post '/new', (req, res) ->
