@@ -79,7 +79,7 @@ app.get '/auth', (req, res) ->
       client_secret: githubSecret,
       code: code
   , (req, res) ->
-    console.log req
+    console.log req, res
 
 
 
