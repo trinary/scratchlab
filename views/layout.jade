@@ -18,6 +18,7 @@ html
   body
     div(class='flash')
     header
+      - console.log(session)
       - if (session.user != undefined)
         img(src=session.avatar)
         span 
