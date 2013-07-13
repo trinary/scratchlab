@@ -49,6 +49,7 @@ trueAuth = express.basicAuth (user, pass) -> true
 # Routes
 #
 app.get '/', cors(), (req, res) -> 
+  console.log req.session.user
   res.render 'index', {title: 'ScratchLab', session: req.session }
 
 app.get '/types', cors(), (req, res) ->
