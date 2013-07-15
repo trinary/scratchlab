@@ -113,7 +113,7 @@ app.get '/channels', (req, res) ->
     rClient.get req.session["gh_id"], (e,d) ->
       rClient.mget d, (e2,d2) ->
         console.log d2
-    res.render 'channels', {title: "Channels", session: req.session, channels, d2}
+        res.render 'channels', {title: "Channels", session: req.session, channels, d2}
 
 app.post '/channels/:id/data', trueAuth, (req,res) ->
   room = req.params.id
