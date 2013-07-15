@@ -108,10 +108,12 @@ app.post '/new', (req, res) ->
   rClient.lpush(user, id)
   res.redirect("/channels/#{id}")
 
-app.get 'channels', (req, res) -> 
+app.get '/channels', (req, res) -> 
   if req.session["gh_id"]
-    rClient.get 
-    res.render 'channels', {title: "Channels", session: req.session }
+    rClient.get req.session["gh_id"], (e,d) ->
+      rClient.mget d, (e2,d2) ->
+        console.log d2
+    res.render 'channels', {title: "Channels", session: req.session, channels, d2}
 
 app.post '/channels/:id/data', trueAuth, (req,res) ->
   room = req.params.id
