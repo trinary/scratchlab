@@ -95,14 +95,23 @@ app.get '/auth', (req, res) ->
       console.log body, user
       req.session["login"] = user.login
       req.session["avatar"] = user.avatar_url
+      req.session["gh_id"] = user.id
       res.redirect "/" 
 
 app.post '/new', (req, res) ->
   name = req.body.name
   id = crypto.randomBytes(12).toString('hex')
   key= crypto.randomBytes(8).toString('hex')
-  rClient.set(id, JSON.stringify({id: id, name: name, key: key}))
+  user=req.session["gh_id"]
+  console.log user
+  rClient.hmset(id,{name: name, key: key, user: user})
+  rClient.lpush(user, id)
   res.redirect("/channels/#{id}")
+
+app.get 'channels', (req, res) -> 
+  if req.session["gh_id"]
+    rClient.get 
+    res.render 'channels', {title: "Channels", session: req.session }
 
 app.post '/channels/:id/data', trueAuth, (req,res) ->
   room = req.params.id
