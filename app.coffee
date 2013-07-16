@@ -60,8 +60,8 @@ app.get  '/new', cors(), (req, res) ->
 
 app.get '/channels/:id', cors(), (req, res) -> 
   console.log "getting #{req.params.id}"
-  rClient.get req.params.id, (e, d) ->
-    channel = JSON.parse d
+  rClient.hgetall req.params.id, (e, d) ->
+    channel = d
     if (! channel)
       res.send(404, "Sorry, channel not found")
     else
