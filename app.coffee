@@ -115,7 +115,7 @@ app.get '/channels', (req, res) ->
     rClient.lrange req.session["gh_id"], 0, -1, (e,d) ->
       console.log e, d
       if d
-        rClient.mget d, (e2,d2) ->
+        rClient.hgetall d, (e2,d2) ->
           console.log d2
           res.render 'channels', {title: "Channels", session: req.session, channels: d2}
       else
