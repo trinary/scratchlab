@@ -112,7 +112,7 @@ app.post '/new', (req, res) ->
 app.get '/channels', (req, res) -> 
   if req.session["gh_id"]
     console.log req.session["gh_id"]
-    rClient.get req.session["gh_id"], (e,d) ->
+    rClient.lrange req.session["gh_id"], 0, -1, (e,d) ->
       console.log e, d
       if d
         rClient.mget d, (e2,d2) ->
