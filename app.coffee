@@ -110,6 +110,7 @@ app.post '/new', (req, res) ->
 
 app.get '/channels', (req, res) -> 
   if req.session["gh_id"]
+    console.log req.session["gh_id"]
     rClient.get req.session["gh_id"], (e,d) ->
       console.log e, d
       if d
