@@ -59,6 +59,7 @@ app.get  '/new', cors(), (req, res) ->
   res.render 'new', { title: 'ScratchLab', session: req.session }
 
 app.get '/channels/:id', cors(), (req, res) -> 
+  console.log "getting #{req.params.id}"
   rClient.get req.params.id, (e, d) ->
     channel = JSON.parse d
     if (! channel)
