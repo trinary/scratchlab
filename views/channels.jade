@@ -4,4 +4,6 @@ block content
   h1 Your Channels
   ul
     - each channel in channels
-      li channel
+      li 
+        a(href="/channels/#{channel.id}")=#{channel.name}
+        span="Key: #{channel.key}"
