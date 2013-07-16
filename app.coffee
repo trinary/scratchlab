@@ -65,7 +65,6 @@ app.get '/channels/:id', cors(), (req, res) ->
     if (! channel)
       res.send(404, "Sorry, channel not found")
     else
-      channel = JSON.parse(d)
       res.render 'show', { title: channel.name, channel: channel, session: req.session }
 
 app.get '/login', (req, res) ->

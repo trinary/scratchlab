@@ -5,5 +5,5 @@ block content
   ul
     - each channel in channels
       li 
-        a(href="/channels/#{channel.id}") #{channel.name}
+        a(href="/channels/#{channel.id}")= #{channel.name}
         span="Key: #{channel.key}"
