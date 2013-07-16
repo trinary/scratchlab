@@ -111,9 +111,16 @@ app.post '/new', (req, res) ->
 app.get '/channels', (req, res) -> 
   if req.session["gh_id"]
     rClient.get req.session["gh_id"], (e,d) ->
-      rClient.mget d, (e2,d2) ->
-        console.log d2
-        res.render 'channels', {title: "Channels", session: req.session, channels: d2}
+      console.log e, d
+      if d
+        rClient.mget d, (e2,d2) ->
+          console.log d2
+          res.render 'channels', {title: "Channels", session: req.session, channels: d2}
+      else
+        res.render 'channels', {title: "Channels", session: req.session, channels: [] }
+  else
+    res.render 'channels', {title: "Channels", session: req.session, channels: [] }
+
 
 app.post '/channels/:id/data', trueAuth, (req,res) ->
   room = req.params.id
