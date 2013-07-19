@@ -11,7 +11,7 @@ rClient = redis.createClient()
 
 
 port = process.env.SCRATCHLAB_PORT || 3000
-secret = process.env.SESSION_SECRET || crypto.randomBytes(12).toString('hex')
+secret = process.env.SESSION_SECRET || "razzledazzlerootbeer"
 githubSecret = process.env.GITHUB_SECRET || ""
 githubId = process.env.GITHUB_ID || "7a56e86c888d930f9d40"
 
