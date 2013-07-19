@@ -105,7 +105,7 @@ app.post '/new', (req, res) ->
   user=req.session["gh_id"]
   obj = {name: name, key: key, user: user}
   console.log user, id , obj
-  rClient.hmset id, object
+  rClient.hmset id, obj
   rClient.lpush(user, id)
   res.redirect("/channels/#{id}")
 
