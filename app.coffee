@@ -117,7 +117,7 @@ app.get '/channels', (req, res) ->
         console.log d
         rClient.mget d, (e2,d2) ->
           console.log d2
-          d2 = [] if (d2[0] == null)
+          d2 = [] unless d2
           res.render 'channels', {title: "Channels", session: req.session, channels: d2}
       else
         res.render 'channels', {title: "Channels", session: req.session, channels: [] }
