@@ -103,8 +103,9 @@ app.post '/new', (req, res) ->
   id = crypto.randomBytes(12).toString('hex')
   key= crypto.randomBytes(8).toString('hex')
   user=req.session["gh_id"]
-  console.log user
-  rClient.hset(id,{name: name, key: key, user: user})
+  obj = {name: name, key: key, user: user}
+  console.log user, id , obj
+  rClient.hmset id, object
   rClient.lpush(user, id)
   res.redirect("/channels/#{id}")
 
