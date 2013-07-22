@@ -11,6 +11,7 @@ port = process.env.SCRATCHLAB_PORT || 3000
 secret = process.env.SESSION_SECRET || "razzledazzlerootbeer"
 githubSecret = process.env.GITHUB_SECRET || ""
 githubId = process.env.GITHUB_ID || "7a56e86c888d930f9d40"
+pgPass = process.env.POSTGRES_PASS || ""
 
 app = express()
 server = http.createServer(app)
@@ -40,7 +41,7 @@ app.configure 'production', ->
 
 app.use app.router
 
-conString = "tcp://scratchlab@localhost:5432/scratchlab"
+conString = "tcp://scratchlab:" + pgPass + "@localhost:5432/scratchlab"
 pgClient = new pg.Client(conString)
 # Middleware
 #
