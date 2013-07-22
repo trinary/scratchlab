@@ -5,10 +5,7 @@ cors    = require('cors')
 http    = require('http')
 request = require('request')
 crypto  = require('crypto')
-redis   = require('redis')
-
-rClient = redis.createClient()
-
+pg      = require('pg')
 
 port = process.env.SCRATCHLAB_PORT || 3000
 secret = process.env.SESSION_SECRET || "razzledazzlerootbeer"
@@ -43,13 +40,14 @@ app.configure 'production', ->
 
 app.use app.router
 
+conString = "tcp://scratchlab@localhost:5432/scratchlab"
+pgClient = new pg.Client(conString)
 # Middleware
 #
 trueAuth = express.basicAuth (user, pass) -> true
 # Routes
 #
 app.get '/', cors(), (req, res) -> 
-  console.log req.session.user
   res.render 'index', {title: 'ScratchLab', session: req.session }
 
 app.get '/types', cors(), (req, res) ->
@@ -59,13 +57,18 @@ app.get  '/new', cors(), (req, res) ->
   res.render 'new', { title: 'ScratchLab', session: req.session }
 
 app.get '/channels/:id', cors(), (req, res) -> 
-  console.log "getting #{req.params.id}"
-  rClient.hgetall req.params.id, (e, d) ->
-    channel = d
-    if (! channel)
-      res.send(404, "Sorry, channel not found")
+  pgClient.connect (err) ->
+    if err
+      console.error 'could not connect to postgres', err
+      res.send 500, "Error connecting to the database"
     else
-      res.render 'show', { title: channel.name, channel: channel, session: req.session }
+      pgClient.query 'select * from channels where id = $1',[req.params.id], (err, result) ->
+        channel = result[0]
+        if (! channel)
+          res.send 404, "Sorry, channel not found"
+        else
+          res.render 'show', { title: channel.name, channel: channel, session: req.session }
+    pgClient.end()
 
 app.get '/login', (req, res) ->
   ghUrl = "https://github.com/login/oauth/authorize?redirect_uri=http://scratchlab.io/auth&scope=gist&client_id=" + githubId 
@@ -73,7 +76,6 @@ app.get '/login', (req, res) ->
 
 app.get '/auth', (req, res) ->
   code = req.query.code
-  console.log code
   request
     url: "https://github.com/login/oauth/access_token",
     method: "POST",
@@ -84,7 +86,6 @@ app.get '/auth', (req, res) ->
       client_secret: githubSecret,
       code: code
   , (e, r, body ) ->
-    console.log body
     req.session["token"] = JSON.parse(body).access_token
     request
       url: "https://api.github.com/user?access_token=" + req.session["token"]
@@ -92,11 +93,22 @@ app.get '/auth', (req, res) ->
         accept: "application/json"
     , (e, r, body) ->
       user = JSON.parse(body)
-      console.log body, user
-      req.session["login"] = user.login
-      req.session["avatar"] = user.avatar_url
-      req.session["gh_id"] = user.id
-      res.redirect "/" 
+      pgClient.connect (err) ->
+        if err
+          console.error 'could not connect to postgres', err
+          res.send 500, "Error connecting to the database"
+        else
+          pgClient.query 'select * from users where github_id = $1', [user.id], (err, result) ->
+            if result.length == 0
+              pgClient.query 'insert into users(created_at, updated_at, logged_in, github_id) values(now(), now, now(), $1', user.id, (err, result) ->
+                console.log "success?"
+            else pgClient.query 'update users set logged_in = now() where github_id = $1', [user.id], (err, result) ->
+                console.log "update success?"
+            req.session["login"] = user.login
+            req.session["avatar"] = user.avatar_url
+            req.session["gh_id"] = user.id
+            res.redirect "/" 
+        pgClient.end()
 
 app.post '/new', (req, res) ->
   name = req.body.name
@@ -104,26 +116,32 @@ app.post '/new', (req, res) ->
   key= crypto.randomBytes(8).toString('hex')
   user=req.session["gh_id"]
   obj = {name: name, key: key, user: user}
-  console.log user, id , obj
   rClient.hmset id, obj
   rClient.lpush(user, id)
+  pgClient.connect (err) ->
+    if err
+      console.error 'could not connect to postgres', err
+      res.send 500, "Error connecting to the database"
+    else
+      pgClient.query 'insert into channels (id, key, name, created_at, updated_at) values ($1, $2, $3, now(), now()',[id, key, name], (err, result) ->
+        console.log("hooray")
+    pgClient.end()
   res.redirect("/channels/#{id}")
 
 app.get '/channels', (req, res) -> 
   if req.session["gh_id"]
-    console.log req.session["gh_id"]
-    rClient.lrange req.session["gh_id"], 0, -1, (e,d) ->
-      console.log e, d
-      if d
-        console.log d
-        rClient.mget d, (e2,d2) ->
-          console.log d2
-          d2 = [] unless d2
-          res.render 'channels', {title: "Channels", session: req.session, channels: d2}
+    pgClient.connect (err) ->
+      if err
+        console.error 'could not connect to postgres', err
+        res.send 500, "Error connecting to the database"
       else
-        res.render 'channels', {title: "Channels", session: req.session, channels: [] }
-  else
-    res.render 'channels', {title: "Channels", session: req.session, channels: [] }
+        pgClient.query 'select * from channels where github_id = $1', [req.session["gh_id"]], (err, result) ->
+          channels = result
+          res.render 'channels', {title: "Channels", session: req.session, channels: d2}
+      pgClient.end()
+
+
+
 
 
 app.post '/channels/:id/data', trueAuth, (req,res) ->
