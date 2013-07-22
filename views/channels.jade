@@ -6,4 +6,4 @@ block content
     - each channel in channels
       li 
         a(href="/channels/#{channel.id}")= channel.name
-        span="Key: #{channel.key}"
+        span= " Key: " +  channel.key
