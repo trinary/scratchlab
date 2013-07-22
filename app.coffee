@@ -117,8 +117,6 @@ app.post '/new', (req, res) ->
   key= crypto.randomBytes(8).toString('hex')
   user=req.session["gh_id"]
   obj = {name: name, key: key, user: user}
-  rClient.hmset id, obj
-  rClient.lpush(user, id)
   pgClient.connect (err) ->
     if err
       console.error 'could not connect to postgres', err
@@ -147,17 +145,24 @@ app.get '/channels', (req, res) ->
 
 app.post '/channels/:id/data', trueAuth, (req,res) ->
   room = req.params.id
-  rClient.get req.params.id, (e,d) ->
-    channel = JSON.parse d
-    if (! channel)
-      res.send(404, "Sorry, channel not found")
+  pgClient.connect (err) ->
+    if err
+      console.error 'could not connect to postgres', err
+      res.send 500, "Error connecting to the database"
     else
-      if (req.user != channel.key)
-        return res.status(403).json { status: "unauthorized"}
-      unless types[req.body.type]
-        types[req.body.type] = req.body
-      io.sockets.in(room).emit('data', req.body)
-      res.status(201).json {status: "created"}
+      pgClient.query 'select * from channels where id = $1', [room], (err, result) ->
+      channel = result[0]
+      console.log channel
+      if (! channel)
+        res.send(404, "Sorry, channel not found")
+      else
+        if (req.user != channel.key)
+          return res.status(403).json { status: "unauthorized"}
+        unless types[req.body.type]
+          types[req.body.type] = req.body
+        io.sockets.in(room).emit('data', req.body)
+        res.status(201).json {status: "created"}
+    pgClient.end()
 
 io.sockets.on 'connection', (socket) ->
   socket.on 'new code', (data) ->
