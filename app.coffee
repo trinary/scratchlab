@@ -100,7 +100,7 @@ app.get '/auth', (req, res) ->
           res.send 500, "Error connecting to the database"
         else
           pgClient.query 'select * from users where github_id = $1', [user.id], (err, result) ->
-            if result.length == 0
+            if result? 
               pgClient.query 'insert into users(created_at, updated_at, logged_in, github_id) values(now(), now, now(), $1', user.id, (err, result) ->
                 console.log "success?"
             else pgClient.query 'update users set logged_in = now() where github_id = $1', [user.id], (err, result) ->
