@@ -62,7 +62,6 @@ app.get  '/new', cors(), (req, res) ->
 
 app.get '/channels/:id', cors(), (req, res) -> 
   pgClient.query 'select * from channels where id = $1',[req.params.id], (err, result) ->
-    console.log("channel:", err, result)
     if result.rowCount > 0
       channel = result.rows[0]
       res.render 'show', { title: channel.name, channel: channel, session: req.session }
@@ -93,21 +92,16 @@ app.get '/auth', (req, res) ->
     , (e, r, body) ->
       user = JSON.parse(body)
       pgClient.query 'select * from users where github_id = $1', [user.id], (err, result) ->
-        console.log "existing user",err,  result
         if result.rowCount == 0
           pgClient.query 'insert into users (created_at, updated_at, logged_in, github_id) values(now(), now(), now(), $1)', [user.id], (err, result) ->
-            console.log "success?", err, result
             pgClient.query 'select * from users where github_id = $1', [user.id], (err, result) ->
-              console.log("new user get", result)
               req.session["login"] = user.login
               req.session["avatar"] = user.avatar_url
               req.session["gh_id"] = user.id
               req.session["user_id"] = result.rows[0].id
               res.redirect "/" 
         else pgClient.query 'update users set logged_in = now() where github_id = $1', [user.id], (err, result) ->
-            console.log "update success?", err, result
             pgClient.query 'select * from users where github_id = $1', [user.id], (err, result) ->
-              console.log("existing user get", result)
               req.session["login"] = user.login
               req.session["avatar"] = user.avatar_url
               req.session["gh_id"] = user.id
@@ -120,34 +114,28 @@ app.post '/new', (req, res) ->
   key= crypto.randomBytes(8).toString('hex')
   gh_user=req.session["gh_id"]
   user=req.session["user_id"]
-  console.log("lolol", name, id, key, gh_user, user)
-  console.log("insert new")
   pgClient.query 'insert into channels (id, key, name, user_id, created_at, updated_at) values ($1, $2, $3, $4, now(), now())',[id, key, name, user ], (err, result) ->
-    console.log("call back hooray", err, result)
     res.redirect("/channels/#{id}")
 
 app.get '/channels', (req, res) -> 
   if req.session["gh_id"]
     pgClient.query 'select * from channels where user_id = $1', [req.session["user_id"]], (err, result) ->
       channels = result.rows
-      console.log(err, result)
       res.render 'channels', {title: "Channels", session: req.session, channels: channels}
 
 app.post '/channels/:id/data', trueAuth, (req,res) ->
   room = req.params.id
   pgClient.query 'select * from channels where id = $1', [room], (err, result) ->
-  channel = result[0]
-  console.log channel
-  if (! channel)
-    res.send(404, "Sorry, channel not found")
-  else
-    if (req.user != channel.key)
-      return res.status(403).json { status: "unauthorized"}
-    unless types[req.body.type]
-      types[req.body.type] = req.body
-    io.sockets.in(room).emit('data', req.body)
-    res.status(201).json {status: "created"}
-    pgClient.end()
+    channel = result.rows[0]
+    if (! channel)
+      res.send(404, "Sorry, channel not found")
+    else
+      if (req.user != channel.key)
+        return res.status(403).json { status: "unauthorized"}
+      unless types[req.body.type]
+        types[req.body.type] = req.body
+      io.sockets.in(room).emit('data', req.body)
+      res.status(201).json {status: "created"}
 
 io.sockets.on 'connection', (socket) ->
   socket.on 'new code', (data) ->
