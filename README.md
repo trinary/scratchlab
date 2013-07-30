@@ -10,7 +10,8 @@ Nodemon is handy for reloading the server when anything changes.
 ## To Use
 
  * Fork
- * Run your repo somewhere (requires redis)
+ * Run your repo somewhere (requires Postgres, schema.sql has the tables)
+ * Auth with GitHub (your own keys go in env vars)
  * Make a new channel (/new)
  * Post some data to /channels/CHANNEL_ID/data with the channel key as the user
 
