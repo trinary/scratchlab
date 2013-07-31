@@ -143,6 +143,12 @@ app.post '/channels/:id/data', trueAuth, (req,res) ->
         types[req.body.type] = req.body
       io.sockets.in(room).emit('data', req.body)
       res.status(201).json {status: "created"}
+app.get '/channels/:id/gists', (req, res) ->
+  pgClient.query 'select * from gists where channel_id = $1', [req.params.id], (err, result) ->
+    obj = {}
+    obj.channel_href = url + "/channels/#{req.params.id}"
+    obj.gists = []
+    res.status(200).json obj
 
 io.sockets.on 'connection', (socket) ->
   socket.on 'new code', (data) ->

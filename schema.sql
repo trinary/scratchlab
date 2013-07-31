@@ -10,3 +10,8 @@ create table channels
   user_id integer,
   created_at timestamp, 
   updated_at timestamp);
+create table gists
+  (id serial PRIMARY KEY,
+  gist_id varchar(30),
+  channel_id varchar(30));
+  
