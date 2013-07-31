@@ -10,8 +10,14 @@ pg      = require('pg')
 port = process.env.SCRATCHLAB_PORT || 3000
 secret = process.env.SESSION_SECRET || "razzledazzlerootbeer"
 githubSecret = process.env.GITHUB_SECRET || ""
-githubId = process.env.GITHUB_ID || "7a56e86c888d930f9d40"
+githubId = process.env.GITHUB_ID || "5c851a4dfee798cddfba"
 pgPass = process.env.POSTGRES_PASS || ""
+
+if process.env.SCRATCHLAB_ENV == "dev" 
+  url = "http://localhost:3000"
+else
+  url = "http://scratchlab.io"
+
 
 app = express()
 server = http.createServer(app)
@@ -69,7 +75,7 @@ app.get '/channels/:id', cors(), (req, res) ->
       res.send 404, "Sorry, channel not found"
 
 app.get '/login', (req, res) ->
-  ghUrl = "https://github.com/login/oauth/authorize?redirect_uri=http://scratchlab.io/auth&scope=gist&client_id=" + githubId 
+  ghUrl = "https://github.com/login/oauth/authorize?redirect_uri=#{url}/auth&scope=gist&client_id=" + githubId 
   res.redirect(ghUrl)
 
 app.get '/auth', (req, res) ->
@@ -91,9 +97,12 @@ app.get '/auth', (req, res) ->
         accept: "application/json"
     , (e, r, body) ->
       user = JSON.parse(body)
+      console.log "$$$$$$$$$$$$$$", user
       pgClient.query 'select * from users where github_id = $1', [user.id], (err, result) ->
+        console.log "###########", err, result
         if result.rowCount == 0
           pgClient.query 'insert into users (created_at, updated_at, logged_in, github_id) values(now(), now(), now(), $1)', [user.id], (err, result) ->
+            console.log "**********", err, result
             pgClient.query 'select * from users where github_id = $1', [user.id], (err, result) ->
               req.session["login"] = user.login
               req.session["avatar"] = user.avatar_url

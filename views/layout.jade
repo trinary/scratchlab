@@ -18,14 +18,18 @@ html
   body
     div(class='flash')
     header
-      if (session.login)
-        img(src=session.avatar)
-        span 
-          #{session.user}
-          a(href="/new") Create a new Channel
-          a(href="/channels") My Channels
-      else
-        a(href="/login") Login with Github
+      ul.menu
+        if (session.login)
+          li.item
+            img(src=session.avatar, width=20, height=20)
+          li.item
+            a(href="/new") New Channel
+          li.item
+            a(href="/channels") My Channels
+        else
+          li.item
+            a(href="/login") Login with Github
+
     div(class='content')
       block content
   

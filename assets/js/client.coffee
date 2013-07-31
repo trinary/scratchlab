@@ -3,6 +3,12 @@ $ ->
   socket = io.connect loc
 
   window.views = []
+  viewContainer = d3.select("ul.view-container")
+  viewContainer.selectAll(".view-type").data(window.handlerTypes)
+    .enter()
+    .append("li")
+    .classed("view-type",true)
+    .text (d,i) -> d.name
 
   socket.on 'connect', () ->
     paths = window.location.pathname.split '/'

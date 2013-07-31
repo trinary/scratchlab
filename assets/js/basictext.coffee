@@ -4,4 +4,4 @@ class BasicText
   handles: ["text"]
   name: ""
 
-  # window.handlerTypes.push BasicText
+window.handlerTypes.push BasicText
