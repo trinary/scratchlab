@@ -147,9 +147,11 @@ app.post '/channels/:id/data', trueAuth, (req,res) ->
 app.get '/channels/:id/gists', (req, res) ->
   pgClient.query 'select * from gists where channel_id = $1', [req.params.id], (err, result) ->
     obj = {}
-    obj.channel_href = url + "/channels/#{req.params.id}"
     obj.gists = []
-    res.status(200).json obj
+    obj.channel_href = url + "/channels/#{req.params.id}"
+    for gist in result.rows
+      obj.gists.push {gist_url: gist.gist_url}
+      res.status(200).json obj
 
 io.sockets.on 'connection', (socket) ->
   socket.on 'new code', (data) ->

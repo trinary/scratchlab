@@ -12,6 +12,6 @@ create table channels
   updated_at timestamp);
 create table gists
   (id serial PRIMARY KEY,
-  gist_id varchar(30),
+  gist_url varchar(180),
   channel_id varchar(30));
   

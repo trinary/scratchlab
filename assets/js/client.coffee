@@ -1,14 +1,18 @@
-$ ->
-  loc = window.location.protocol + "//" + window.location.host
-  socket = io.connect loc
-
-  window.views = []
+window.showViews = () ->
   viewContainer = d3.select("ul.view-container")
   viewContainer.selectAll(".view-type").data(window.handlerTypes)
     .enter()
     .append("li")
     .classed("view-type",true)
     .text (d,i) -> d.name
+
+
+$ ->
+  loc = window.location.protocol + "//" + window.location.host
+  socket = io.connect loc
+
+  window.views = []
+  showViews()
 
   socket.on 'connect', () ->
     paths = window.location.pathname.split '/'
