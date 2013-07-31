@@ -96,26 +96,27 @@ app.get '/auth', (req, res) ->
       headers:
         accept: "application/json"
     , (e, r, body) ->
-      user = JSON.parse(body)
-      console.log "$$$$$$$$$$$$$$", user
-      pgClient.query 'select * from users where github_id = $1', [user.id], (err, result) ->
-        console.log "###########", err, result
-        if result.rowCount == 0
-          pgClient.query 'insert into users (created_at, updated_at, logged_in, github_id) values(now(), now(), now(), $1)', [user.id], (err, result) ->
-            console.log "**********", err, result
-            pgClient.query 'select * from users where github_id = $1', [user.id], (err, result) ->
-              req.session["login"] = user.login
-              req.session["avatar"] = user.avatar_url
-              req.session["gh_id"] = user.id
-              req.session["user_id"] = result.rows[0].id
-              res.redirect "/" 
-        else pgClient.query 'update users set logged_in = now() where github_id = $1', [user.id], (err, result) ->
-            pgClient.query 'select * from users where github_id = $1', [user.id], (err, result) ->
-              req.session["login"] = user.login
-              req.session["avatar"] = user.avatar_url
-              req.session["gh_id"] = user.id
-              req.session["user_id"] = result.rows[0].id
-              res.redirect "/" 
+      user = JSON.parse body
+      findOrCreateUserByGhId user, (user, id) ->
+        req.session["login"] = user.login
+        req.session["avatar"] = user.avatar_url
+        req.session["gh_id"] = user.id
+        req.session["user_id"] = id
+        res.redirect "/" 
+
+findOrCreateUserByGhId = (gh_user, callback) ->
+  pgClient.query 'select * from users where github_id = $1', [gh_user.id], (err, result) ->
+    console.log "@@@@@@@", err, result
+    if result.rowCount == 0
+      pgClient.query 'insert into users (created_at, updated_at, logged_in, github_id) values(now(), now(), now(), $1)', [gh_user.id], (err, result) ->
+        pgClient.query 'select * from users where github_id = $1', [gh_user.id], (err, result) ->
+          console.log "#####". err, result
+          callback gh_user, result.rows[0].id
+    else pgClient.query 'update users set logged_in = now() where github_id = $1', [gh_user.id], (err, result) ->
+        pgClient.query 'select * from users where github_id = $1', [gh_user.id], (err, result) ->
+          console.log "%%%%%", err, result
+          callback gh_user, result.rows[0].id
+
 
 app.post '/new', (req, res) ->
   name = req.body.name
