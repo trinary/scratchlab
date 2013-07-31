@@ -8,7 +8,7 @@ crypto  = require('crypto')
 pg      = require('pg')
 
 port = process.env.SCRATCHLAB_PORT || 3000
-secret = process.env.SESSION_SECRET || "razzledazzlerootbeer"
+secret = process.env.SESSION_SECRET || "this is a super secret session key."
 githubSecret = process.env.GITHUB_SECRET || ""
 githubId = process.env.GITHUB_ID || "5c851a4dfee798cddfba"
 pgPass = process.env.POSTGRES_PASS || ""
@@ -143,6 +143,7 @@ app.post '/channels/:id/data', trueAuth, (req,res) ->
         types[req.body.type] = req.body
       io.sockets.in(room).emit('data', req.body)
       res.status(201).json {status: "created"}
+
 app.get '/channels/:id/gists', (req, res) ->
   pgClient.query 'select * from gists where channel_id = $1', [req.params.id], (err, result) ->
     obj = {}
