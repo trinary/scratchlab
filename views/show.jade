@@ -1,8 +1,10 @@
 extends layout
 
 block content
-  h1 #{channel.name}
-  .info.hidden
+  h1 
+    span.infobutton.iconic.paperclip #{channel.name}
+
+  .infobox.hidden
     ul.gists
     h5 Add Gist:
     h4 Available Views:

@@ -16,4 +16,9 @@ getGists = () ->
             .text( d.files[file]["content"])
           window.showViews()
 
+toggleInfo = (ev) ->
+  info = d3.select(".infobox")
+  info.classed("hidden", ! info.classed("hidden"))
+
+d3.select(".infobutton").on("click", toggleInfo)
 getGists()
