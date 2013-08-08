@@ -1,11 +1,12 @@
 extends layout
 
 block content
-  h1 ScratchLab - Channel #{channel.name} 
-  .info-box
-    INFO
-  h4 Available Views:
-  ul.view-container
+  h1 #{channel.name}
+  .info.hidden
+    ul.gists
+    h5 Add Gist:
+    h4 Available Views:
+    ul.view-container
 
   .view
   != js('show.js')
