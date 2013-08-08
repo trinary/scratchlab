@@ -97,6 +97,7 @@ app.get '/auth', (req, res) ->
         accept: "application/json"
     , (e, r, body) ->
       user = JSON.parse body
+      console.log user
       findOrCreateUserByGhId user, (user, id) ->
         req.session["login"] = user.login
         req.session["avatar"] = user.avatar_url
@@ -145,13 +146,20 @@ app.post '/channels/:id/data', trueAuth, (req,res) ->
       res.status(201).json {status: "created"}
 
 app.get '/channels/:id/gists', (req, res) ->
-  pgClient.query 'select * from gists where channel_id = $1', [req.params.id], (err, result) ->
+  pgClient.query "select * from gists where channel_id = $1", [req.params.id], (err, result) ->
+    console.log err, result
     obj = {}
     obj.gists = []
     obj.channel_href = url + "/channels/#{req.params.id}"
     for gist in result.rows
-      obj.gists.push {gist_url: gist.gist_url}
+      obj.gists.push {gist_href: gist.gist_href}
       res.status(200).json obj
+
+app.post '/channels/:id/gists', (req, res) ->
+  gist = JSON.parse(req.body)
+  console.log gist
+  pgClient.query 'insert into gists (gist_href, channel_id) values ($1, $2)', [gist.gist_url, req.params.id], (e, r) ->
+    res.status(201).json gist
 
 io.sockets.on 'connection', (socket) ->
   socket.on 'new code', (data) ->
