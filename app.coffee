@@ -97,6 +97,7 @@ app.get '/auth', (req, res) ->
         accept: "application/json"
     , (e, r, body) ->
       user = JSON.parse body
+      console.log user
       findOrCreateUserByGhId user, (user, id) ->
         req.session["login"] = user.login
         req.session["avatar"] = user.avatar_url
@@ -146,6 +147,7 @@ app.post '/channels/:id/data', trueAuth, (req,res) ->
 
 app.get '/channels/:id/gists', (req, res) ->
   pgClient.query "select * from gists where channel_id = $1", [req.params.id], (err, result) ->
+    console.log err, result
     obj = {}
     obj.gists = []
     obj.channel_href = url + "/channels/#{req.params.id}"
