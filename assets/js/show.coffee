@@ -1,3 +1,11 @@
+showViews = () ->
+  viewContainer = d3.select("ul.view-container")
+  viewContainer.selectAll(".view-type").data(window.handlerTypes)
+    .enter()
+    .append("li")
+    .classed("view-type",true)
+    .text (d,i) -> d.name
+
 getGists = () ->
   gistsUrl = window.location + "/gists"
   d3.json gistsUrl, (e, d) -> 
@@ -11,14 +19,25 @@ getGists = () ->
       d3.json apiUrl, (e, d) ->
         for file of d.files
           body = d3.select("body")
-          body.append("script")
-            .attr("type", "text/javascript")
-            .text( d.files[file]["content"])
-          window.showViews()
+          if d.files[file]["type"] == "application/javascript"
+            body.append("script")
+              .attr("id", id)
+              .attr("type", "text/javascript")
+              .text( d.files[file]["content"])
+        showViews()
+
+  d3.select("#add_gist").on "click", (e) ->
+    url = document.getElementById("gist_input").value
+    obj = { gist_href: url }
+    $.post(window.location + "/gists", obj, (d, s, xhr) ->
+      getGists()
+    , "application/json")
 
 toggleInfo = (ev) ->
   info = d3.select(".infobox")
   info.classed("hidden", ! info.classed("hidden"))
 
+
+window.views = []
 d3.select(".infobutton").on("click", toggleInfo)
 getGists()

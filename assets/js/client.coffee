@@ -6,7 +6,6 @@ window.showViews = () ->
     .classed("view-type",true)
     .text (d,i) -> d.name
 
-
 $ ->
   loc = window.location.protocol + "//" + window.location.host
   socket = io.connect loc
