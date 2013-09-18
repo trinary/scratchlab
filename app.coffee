@@ -5,7 +5,7 @@ cors    = require('cors')
 http    = require('http')
 request = require('request')
 crypto  = require('crypto')
-db      = require('./data')
+db      = require('./db')
 
 port = process.env.SCRATCHLAB_PORT || 3000
 secret = process.env.SESSION_SECRET || "this is a super secret session key."
