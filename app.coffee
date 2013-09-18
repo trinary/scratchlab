@@ -114,6 +114,15 @@ findOrCreateUserByGhId = (gh_user, callback) ->
         pgClient.query 'select * from users where github_id = $1', [gh_user.id], (err, result) ->
           callback gh_user, result.rows[0].id
 
+findChannelById = (id, callback) ->
+  pgClient.query 'select * from channels where id = $1', [id], (e,r) ->
+    callback(e, r.rows)
+findChannelsByUser = (user_id, callback) ->
+  pgClient.query 'select * from channels where user_id = $1', [user_id], (e, r) ->
+    callback(e, r.rows)
+findGistsByChannel = (id, callback) ->
+  pgClient.query 'select * from gitsts where channel_id = $1', [id], (e,r) ->
+    callback(e, r.rows)
 
 app.post '/new', (req, res) ->
   name = req.body.name
@@ -132,8 +141,8 @@ app.get '/channels', (req, res) ->
 
 app.post '/channels/:id/data', trueAuth, (req,res) ->
   room = req.params.id
-  pgClient.query 'select * from channels where id = $1', [room], (err, result) ->
-    channel = result.rows[0]
+  findChannelById [room], (results) ->
+    channel = results[0]
     if (! channel)
       res.send(404, "Sorry, channel not found")
     else
