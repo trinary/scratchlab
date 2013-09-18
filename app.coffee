@@ -5,13 +5,12 @@ cors    = require('cors')
 http    = require('http')
 request = require('request')
 crypto  = require('crypto')
-pg      = require('pg')
+data    = require('./data')
 
 port = process.env.SCRATCHLAB_PORT || 3000
 secret = process.env.SESSION_SECRET || "this is a super secret session key."
 githubSecret = process.env.GITHUB_SECRET || ""
 githubId = process.env.GITHUB_ID || "5c851a4dfee798cddfba"
-pgPass = process.env.POSTGRES_PASS || ""
 
 if process.env.SCRATCHLAB_ENV == "dev" 
   url = "http://localhost:3000"
@@ -47,9 +46,6 @@ app.configure 'production', ->
 
 app.use app.router
 
-conString = "tcp://scratchlab:" + pgPass + "@localhost:5432/scratchlab"
-pgClient = new pg.Client(conString)
-pgClient.connect()
 # Middleware
 #
 trueAuth = express.basicAuth (user, pass) -> true
@@ -67,7 +63,7 @@ app.get  '/new', cors(), (req, res) ->
   res.render 'new', { title: 'ScratchLab', session: req.session }
 
 app.get '/channels/:id', cors(), (req, res) -> 
-  pgClient.query 'select * from channels where id = $1',[req.params.id], (err, result) ->
+  findChannelById req.params.id, (err, result) ->
     if result.rowCount > 0
       channel = result.rows[0]
       res.render 'show', { title: channel.name, channel: channel, session: req.session }
@@ -104,25 +100,7 @@ app.get '/auth', (req, res) ->
         req.session["user_id"] = id
         res.redirect "/" 
 
-findOrCreateUserByGhId = (gh_user, callback) ->
-  pgClient.query 'select * from users where github_id = $1', [gh_user.id], (err, result) ->
-    if result.rowCount == 0
-      pgClient.query 'insert into users (created_at, updated_at, logged_in, github_id) values(now(), now(), now(), $1)', [gh_user.id], (err, result) ->
-        pgClient.query 'select * from users where github_id = $1', [gh_user.id], (err, result) ->
-          callback gh_user, result.rows[0].id
-    else pgClient.query 'update users set logged_in = now() where github_id = $1', [gh_user.id], (err, result) ->
-        pgClient.query 'select * from users where github_id = $1', [gh_user.id], (err, result) ->
-          callback gh_user, result.rows[0].id
 
-findChannelById = (id, callback) ->
-  pgClient.query 'select * from channels where id = $1', [id], (e,r) ->
-    callback(e, r.rows)
-findChannelsByUser = (user_id, callback) ->
-  pgClient.query 'select * from channels where user_id = $1', [user_id], (e, r) ->
-    callback(e, r.rows)
-findGistsByChannel = (id, callback) ->
-  pgClient.query 'select * from gitsts where channel_id = $1', [id], (e,r) ->
-    callback(e, r.rows)
 
 app.post '/new', (req, res) ->
   name = req.body.name
@@ -130,18 +108,19 @@ app.post '/new', (req, res) ->
   key= crypto.randomBytes(8).toString('hex')
   gh_user=req.session["gh_id"]
   user=req.session["user_id"]
-  pgClient.query 'insert into channels (id, key, name, user_id, created_at, updated_at) values ($1, $2, $3, $4, now(), now())',[id, key, name, user ], (err, result) ->
+  createChannel id, key, name, user, (err, result) ->
     res.redirect("/channels/#{id}")
 
 app.get '/channels', (req, res) -> 
   if req.session["gh_id"]
-    pgClient.query 'select * from channels where user_id = $1', [req.session["user_id"]], (err, result) ->
-      channels = result.rows
+    findChannelsByUser req.session["user_id"], (err, result) ->
+      channels = result
       res.render 'channels', {title: "Channels", session: req.session, channels: channels}
 
 app.post '/channels/:id/data', trueAuth, (req,res) ->
   room = req.params.id
-  findChannelById [room], (results) ->
+  data.findChannelById [room], (error, results) ->
+    console.log(room,results)
     channel = results[0]
     if (! channel)
       res.send(404, "Sorry, channel not found")
@@ -154,19 +133,18 @@ app.post '/channels/:id/data', trueAuth, (req,res) ->
       res.status(201).json {status: "created"}
 
 app.get '/channels/:id/gists', (req, res) ->
-  pgClient.query "select * from gists where channel_id = $1", [req.params.id], (err, result) ->
+  data.findChannelsByUser req.params.id, (err, result) ->
     obj = {}
     obj.gists = []
     obj.channel_href = url + "/channels/#{req.params.id}"
-    console.log result.rows
-    for gist in result.rows
+    for gist in result
       obj.gists.push {gist_href: gist.gist_href}
     res.status(200).json obj
 
 app.post '/channels/:id/gists', (req, res) ->
   gist = req.body
   console.log gist
-  pgClient.query 'insert into gists (gist_href, channel_id) values ($1, $2)', [gist.gist_href, req.params.id], (e, r) ->
+  data.createGist gist.gist_href, req.params.id, (e, r) ->
     res.status(201).json gist
 
 io.sockets.on 'connection', (socket) ->
