@@ -20,18 +20,23 @@ module.exports =
   findChannelById: (id, callback) ->
     pgClient.query 'select * from channels where id = $1', [id], (e,r) ->
       callback(e, r.rows)
+
   findChannelsByUser: (user, callback) ->
-    pgClient.query 'select * from channels where user_id = $1', user, (err, result) ->
+    pgClient.query 'select * from channels where user_id = $1', [user], (err, result) ->
       callback(e,r.rows)
+
   findChannelsByUser: (user_id, callback) ->
     pgClient.query 'select * from channels where user_id = $1', [user_id], (e, r) ->
       callback(e, r.rows)
+
   findGistsByChannel: (id, callback) ->
     pgClient.query 'select * from gitsts where channel_id = $1', [id], (e,r) ->
       callback(e, r.rows)
+
   createChannel: (id, key, name, user, callback) ->
     pgClient.query 'insert into channels (id, key, name, user_id, created_at, updated_at) values ($1, $2, $3, $4, now(), now())',[id, key, name, user], (err, result) ->
       callback(err, result.rows)
+
   createGist: (href, channel) ->
     pgClient.query 'insert into gists (gist_href, channel_id) values ($1, $2)', [href, channel], (e, r) ->
       callback(err,result.rows)
