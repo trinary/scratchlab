@@ -40,4 +40,5 @@ toggleInfo = (ev) ->
 
 window.views = []
 d3.select(".infobutton").on("click", toggleInfo)
+d3.select(".infox").on("click", toggleInfo)
 getGists()
