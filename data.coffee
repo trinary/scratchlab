@@ -6,7 +6,6 @@ pgClient = new pg.Client(conString)
 pgClient.connect()
 
 module.exports = 
-
   findOrCreateUserByGhId: (gh_user, callback) ->
     pgClient.query 'select * from users where github_id = $1', [gh_user.id], (err, result) ->
       if result.rowCount == 0
@@ -18,26 +17,23 @@ module.exports =
             callback gh_user, result.rows[0].id
 
   findChannelById: (id, callback) ->
-    pgClient.query 'select * from channels where id = $1', [id], (e,r) ->
-      callback(e, r.rows)
+    pgClient.query 'select * from channels where id = $1', [id], (err,result) ->
+      callback(err, result.rows)
 
   findChannelsByUser: (user, callback) ->
     pgClient.query 'select * from channels where user_id = $1', [user], (err, result) ->
-      callback(e,r.rows)
-
-  findChannelsByUser: (user_id, callback) ->
-    pgClient.query 'select * from channels where user_id = $1', [user_id], (e, r) ->
-      callback(e, r.rows)
+      console.log(err,result)
+      callback(err,result.rows)
 
   findGistsByChannel: (id, callback) ->
-    pgClient.query 'select * from gitsts where channel_id = $1', [id], (e,r) ->
-      callback(e, r.rows)
+    pgClient.query 'select * from gists where channel_id = $1', [id], (err,result) ->
+      callback(err, result.rows)
 
   createChannel: (id, key, name, user, callback) ->
     pgClient.query 'insert into channels (id, key, name, user_id, created_at, updated_at) values ($1, $2, $3, $4, now(), now())',[id, key, name, user], (err, result) ->
       callback(err, result.rows)
 
   createGist: (href, channel) ->
-    pgClient.query 'insert into gists (gist_href, channel_id) values ($1, $2)', [href, channel], (e, r) ->
+    pgClient.query 'insert into gists (gist_href, channel_id) values ($1, $2)', [href, channel], (err, result) ->
       callback(err,result.rows)
 

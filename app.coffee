@@ -64,8 +64,8 @@ app.get  '/new', cors(), (req, res) ->
 
 app.get '/channels/:id', cors(), (req, res) -> 
   db.findChannelById req.params.id, (err, result) ->
-    if result.rowCount > 0
-      channel = result.rows[0]
+    if result.length > 0
+      channel = result[0]
       res.render 'show', { title: channel.name, channel: channel, session: req.session }
     else
       res.send 404, "Sorry, channel not found"
@@ -118,7 +118,6 @@ app.get '/channels', (req, res) ->
 app.post '/channels/:id/data', trueAuth, (req,res) ->
   room = req.params.id
   db.findChannelById room, (error, results) ->
-    console.log(room,results)
     channel = results[0]
     if (! channel)
       res.send(404, "Sorry, channel not found")
@@ -131,7 +130,8 @@ app.post '/channels/:id/data', trueAuth, (req,res) ->
       res.status(201).json {status: "created"}
 
 app.get '/channels/:id/gists', (req, res) ->
-  db.findChannelsByUser req.params.id, (err, result) ->
+  db.findGistsByChannel req.params.id, (err, result) ->
+    console.log(result)
     obj = {}
     obj.gists = []
     obj.channel_href = url + "/channels/#{req.params.id}"
@@ -141,7 +141,6 @@ app.get '/channels/:id/gists', (req, res) ->
 
 app.post '/channels/:id/gists', (req, res) ->
   gist = req.body
-  console.log gist
   db.createGist gist.gist_href, req.params.id, (e, r) ->
     res.status(201).json gist
 
