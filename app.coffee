@@ -100,8 +100,6 @@ app.get '/auth', (req, res) ->
         req.session["user_id"] = id
         res.redirect "/" 
 
-
-
 app.post '/new', (req, res) ->
   name = req.body.name
   id = crypto.randomBytes(12).toString('hex')
@@ -119,7 +117,7 @@ app.get '/channels', (req, res) ->
 
 app.post '/channels/:id/data', trueAuth, (req,res) ->
   room = req.params.id
-  db.findChannelById [room], (error, results) ->
+  db.findChannelById room, (error, results) ->
     console.log(room,results)
     channel = results[0]
     if (! channel)
