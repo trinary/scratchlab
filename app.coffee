@@ -5,7 +5,7 @@ cors    = require('cors')
 http    = require('http')
 request = require('request')
 crypto  = require('crypto')
-data    = require('./data')
+db      = require('./data')
 
 port = process.env.SCRATCHLAB_PORT || 3000
 secret = process.env.SESSION_SECRET || "this is a super secret session key."
@@ -63,7 +63,7 @@ app.get  '/new', cors(), (req, res) ->
   res.render 'new', { title: 'ScratchLab', session: req.session }
 
 app.get '/channels/:id', cors(), (req, res) -> 
-  findChannelById req.params.id, (err, result) ->
+  db.findChannelById req.params.id, (err, result) ->
     if result.rowCount > 0
       channel = result.rows[0]
       res.render 'show', { title: channel.name, channel: channel, session: req.session }
@@ -93,7 +93,7 @@ app.get '/auth', (req, res) ->
         accept: "application/json"
     , (e, r, body) ->
       user = JSON.parse body
-      findOrCreateUserByGhId user, (user, id) ->
+      db.findOrCreateUserByGhId user, (user, id) ->
         req.session["login"] = user.login
         req.session["avatar"] = user.avatar_url
         req.session["gh_id"] = user.id
@@ -108,18 +108,18 @@ app.post '/new', (req, res) ->
   key= crypto.randomBytes(8).toString('hex')
   gh_user=req.session["gh_id"]
   user=req.session["user_id"]
-  createChannel id, key, name, user, (err, result) ->
+  db.createChannel id, key, name, user, (err, result) ->
     res.redirect("/channels/#{id}")
 
 app.get '/channels', (req, res) -> 
   if req.session["gh_id"]
-    findChannelsByUser req.session["user_id"], (err, result) ->
+    db.findChannelsByUser req.session["user_id"], (err, result) ->
       channels = result
       res.render 'channels', {title: "Channels", session: req.session, channels: channels}
 
 app.post '/channels/:id/data', trueAuth, (req,res) ->
   room = req.params.id
-  data.findChannelById [room], (error, results) ->
+  db.findChannelById [room], (error, results) ->
     console.log(room,results)
     channel = results[0]
     if (! channel)
@@ -133,7 +133,7 @@ app.post '/channels/:id/data', trueAuth, (req,res) ->
       res.status(201).json {status: "created"}
 
 app.get '/channels/:id/gists', (req, res) ->
-  data.findChannelsByUser req.params.id, (err, result) ->
+  db.findChannelsByUser req.params.id, (err, result) ->
     obj = {}
     obj.gists = []
     obj.channel_href = url + "/channels/#{req.params.id}"
@@ -144,7 +144,7 @@ app.get '/channels/:id/gists', (req, res) ->
 app.post '/channels/:id/gists', (req, res) ->
   gist = req.body
   console.log gist
-  data.createGist gist.gist_href, req.params.id, (e, r) ->
+  db.createGist gist.gist_href, req.params.id, (e, r) ->
     res.status(201).json gist
 
 io.sockets.on 'connection', (socket) ->
