@@ -12,10 +12,10 @@ secret = process.env.SESSION_SECRET || "this is a super secret session key."
 githubSecret = process.env.GITHUB_SECRET || ""
 githubId = process.env.GITHUB_ID || "5c851a4dfee798cddfba"
 
-if process.env.SCRATCHLAB_ENV == "dev" 
-  url = "http://localhost:3000"
-else
+if process.env.SCRATCHLAB_ENV == "production"
   url = "http://scratchlab.io"
+else
+  url = "http://localhost:3000"
 
 
 app = express()

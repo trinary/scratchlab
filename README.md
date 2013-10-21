@@ -1,5 +1,8 @@
 # A collaborative scratch pad for data and code.
 
+## Before running
+ * ```npm install -g nodemon```
+ * ```createdb scratchlab```
 
 ## To run
  * npm install
